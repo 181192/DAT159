@@ -16,27 +16,34 @@ public class Customer {
         int frequentRenterPoints = 0;
         Enumeration rentals = _rentals.elements();
         String result = "Rental Record for " + getName() + "\n";
+
         while (rentals.hasMoreElements()) {
             double thisAmount = 0;
             Rental each = (Rental) rentals.nextElement();
             thisAmount = determineAmount(thisAmount, each);
 
-            // add frequent renter points
-            frequentRenterPoints++;
-
-            // add bonus for a two day new release rental
-            Movie movie = each.getMovie();
-            if ((movie.getPriceCode() == Movie.NEW_RELEASE) &&
-                    each.getDaysRented() > 1) frequentRenterPoints++;
+            frequentRenterPoints = getFrequentRenterPoints(frequentRenterPoints, each);
 
             //show figures for this rental
-            result += "\t" + movie.getTitle() + "\t" +
+            result += "\t" + each.getMovie().getTitle() + "\t" +
                     String.valueOf(thisAmount) + "\n";
             totalAmount += thisAmount;
         }
 
         result = addFooterLines(totalAmount, frequentRenterPoints, result);
         return result;
+    }
+
+    private int getFrequentRenterPoints(int frequentRenterPoints, Rental each) {
+        Movie movie = each.getMovie();
+        boolean isNewRelease = movie.getPriceCode() == Movie.NEW_RELEASE;
+        boolean isRentedOneDay = each.getDaysRented() > 1;
+
+        frequentRenterPoints++;
+
+        if (isNewRelease && isRentedOneDay) frequentRenterPoints++;
+
+        return frequentRenterPoints;
     }
 
     private double determineAmount(double thisAmount, Rental each) {
