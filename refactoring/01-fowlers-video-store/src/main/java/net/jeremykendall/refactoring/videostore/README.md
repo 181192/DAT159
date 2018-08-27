@@ -1,4 +1,7 @@
 ## Refactorings
+
+## Extract methods
+
 from 
 ```
 result += "Amount owed is " + String.valueOf(totalAmount) + "\n";
@@ -72,16 +75,17 @@ private double determineAmount(double thisAmount, Rental each) {
 
 ```
 
+## Variable Extraction
 
 from 
 ```
 // add bonus for a two day new release rental
-            if ((each.getMovie().getPriceCode() == Movie.NEW_RELEASE) &&
-                    each.getDaysRented() > 1) frequentRenterPoints++;
+if ((each.getMovie().getPriceCode() == Movie.NEW_RELEASE) &&
+        each.getDaysRented() > 1) frequentRenterPoints++;
 
-            //show figures for this rental
-            result += "\t" + each.getMovie().getTitle() + "\t" +
-                    String.valueOf(thisAmount) + "\n";
+//show figures for this rental
+result += "\t" + each.getMovie().getTitle() + "\t" +
+        String.valueOf(thisAmount) + "\n";
 ```
 
 
@@ -89,16 +93,15 @@ to
 
 ```
 // add bonus for a two day new release rental
-            Movie movie = each.getMovie();
-            if ((movie.getPriceCode() == Movie.NEW_RELEASE) &&
-                    each.getDaysRented() > 1) frequentRenterPoints++;
+Movie movie = each.getMovie();
+if ((movie.getPriceCode() == Movie.NEW_RELEASE) &&
+        each.getDaysRented() > 1) frequentRenterPoints++;
 
-            //show figures for this rental
-            result += "\t" + movie.getTitle() + "\t" +
-                    String.valueOf(thisAmount) + "\n";
-            totalAmount += thisAmount;
+//show figures for this rental
+result += "\t" + movie.getTitle() + "\t" +
+        String.valueOf(thisAmount) + "\n";
+totalAmount += thisAmount;
 ```
-
 
 from
 ```
@@ -147,6 +150,8 @@ private double determineAmount(double thisAmount, Rental each) {
     }
 ```
 
+
+## Simplification
 
 from 
 
