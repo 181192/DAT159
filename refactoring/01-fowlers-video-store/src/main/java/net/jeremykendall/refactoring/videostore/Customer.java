@@ -20,12 +20,16 @@ public class Customer {
         while (rentals.hasMoreElements()) {
             double thisAmount = 0;
             Rental each = (Rental) rentals.nextElement();
-            thisAmount = determineAmount(thisAmount, each);
+            Movie movie = each.getMovie();
+            int priceCode = movie.getPriceCode();
+            int daysRented = each.getDaysRented();
+            String title = movie.getTitle();
 
-            frequentRenterPoints = getFrequentRenterPoints(frequentRenterPoints, each);
+            thisAmount = determineAmount(thisAmount, priceCode, daysRented);
+            frequentRenterPoints = getFrequentRenterPoints(frequentRenterPoints, priceCode, daysRented);
 
             //show figures for this rental
-            result += "\t" + each.getMovie().getTitle() + "\t" +
+            result += "\t" + title + "\t" +
                     String.valueOf(thisAmount) + "\n";
             totalAmount += thisAmount;
         }
@@ -34,10 +38,9 @@ public class Customer {
         return result;
     }
 
-    private int getFrequentRenterPoints(int frequentRenterPoints, Rental each) {
-        Movie movie = each.getMovie();
-        boolean isNewRelease = movie.getPriceCode() == Movie.NEW_RELEASE;
-        boolean isRentedOneDay = each.getDaysRented() > 1;
+    private int getFrequentRenterPoints(int frequentRenterPoints, int priceCode, int daysRented) {
+        boolean isNewRelease = priceCode == Movie.NEW_RELEASE;
+        boolean isRentedOneDay = daysRented > 1;
 
         frequentRenterPoints++;
 
@@ -46,10 +49,8 @@ public class Customer {
         return frequentRenterPoints;
     }
 
-    private double determineAmount(double thisAmount, Rental each) {
-        // determine amount for each line
-        int daysRented = each.getDaysRented();
-        switch (each.getMovie().getPriceCode()) {
+    private double determineAmount(double thisAmount, int priceCode, int daysRented) {
+        switch (priceCode) {
             case Movie.REGULAR:
                 thisAmount += 2;
                 if (daysRented > 2)
