@@ -29,13 +29,11 @@ public class Customer {
             frequentRenterPoints = getFrequentRenterPoints(frequentRenterPoints, priceCode, daysRented);
 
             //show figures for this rental
-            result += "\t" + title + "\t" +
-                    String.valueOf(thisAmount) + "\n";
+            result += "\t" + title + "\t" + String.valueOf(thisAmount) + "\n";
             totalAmount += thisAmount;
         }
 
-        result = addFooterLines(totalAmount, frequentRenterPoints, result);
-        return result;
+        return addFooterLines(totalAmount, frequentRenterPoints, result);
     }
 
     private int getFrequentRenterPoints(int frequentRenterPoints, int priceCode, int daysRented) {
