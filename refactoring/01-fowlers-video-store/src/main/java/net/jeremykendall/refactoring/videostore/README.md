@@ -271,3 +271,16 @@ private double determineAmount(double thisAmount, int priceCode, int daysRented)
 
 
 ```
+
+### Removed local variable
+
+from
+```
+result = addFooterLines(totalAmount, frequentRenterPoints, result);
+return result;
+```
+
+to
+```
+return addFooterLines(totalAmount, frequentRenterPoints, result);
+```
