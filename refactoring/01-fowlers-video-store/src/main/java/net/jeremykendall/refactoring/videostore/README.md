@@ -1,4 +1,4 @@
-## Refactorings
+# Refactorings
 
 ## Extract methods
 
@@ -272,7 +272,7 @@ private double determineAmount(double thisAmount, int priceCode, int daysRented)
 
 ```
 
-### Removed local variable
+## Removed local variable
 
 from
 ```
