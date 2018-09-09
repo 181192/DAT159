@@ -1,4 +1,4 @@
-package net.jeremykendall.refactoring.videostore;
+package no.kalli.videostore;
 
 public abstract class Movie {
 

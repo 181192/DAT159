@@ -1,4 +1,4 @@
-package net.jeremykendall.refactoring.videostore;
+package no.kalli.videostore;
 
 import java.util.ArrayList;
 import java.util.Iterator;
