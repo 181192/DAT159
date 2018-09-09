@@ -1,5 +1,6 @@
 # DAT159 Refactoring -  Oblig 01
 ##### *By Kristoffer-Andre Kalliainen (181192)*
+[GitHub repository - 181192](https://github.com/181192/DAT159/tree/master/refactoring/01-fowlers-video-store)
 
 ## Part 1 - Refactoring steps
 
@@ -422,10 +423,10 @@ Before the refactoring the Complexity was 9.
 
 30 number of edges - 23 number of nodes + 2 = 9
 
-![before](https://github.com/181192/DAT159/blob/master/refactoring/01-fowlers-video-store/before.png)
+![before](https://github.com/181192/DAT159/raw/master/refactoring/01-fowlers-video-store/before.png)
 
 After the refactoring the complexity was 2.
 
 17 number of edges - 17 number of nodes + 2 = 2
 
-![after](https://github.com/181192/DAT159/blob/master/refactoring/01-fowlers-video-store/after.png)
+![after](https://github.com/181192/DAT159/raw/master/refactoring/01-fowlers-video-store/after.png)
