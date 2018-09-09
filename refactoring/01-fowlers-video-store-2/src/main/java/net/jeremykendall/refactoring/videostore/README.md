@@ -1,4 +1,5 @@
-
+# DAT159 Refactoring -  Oblig 01
+##### *By Kristoffer-Andre Kalliainen (181192)*
 
 Extracting the switch case to its own method `determineAmount()`, but before extracting the method I extracted
 the `each.getMovie().getPricecode()` and `each.getDaysRented()` into separate variables.
@@ -402,78 +403,3 @@ public class Rental {
 }
 
 ```
-
-# Optimazing code according to coding standards
-Early classes of the Java API, such as Vector, Hashtable and StringBuffer, were synchronized to make them thread-safe. Unfortunately, synchronization has a big negative impact on performance, even when using these collections from a single thread.
-It is better to use their new unsynchronized replacements:
-ArrayList or LinkedList instead of Vector
-> from
-```java
-public class Customer {
-    private String _name;
-    private Vector _rentals = new Vector();
-
-    public Customer(String name) {
-        _name = name;
-    }
-
-    public String statement() {
-        double totalAmount = 0;
-        int frequentRenterPoints = 0;
-        Enumeration rentals = _rentals.elements();
-        String result = "Rental Record for " + getName() + "\n";
-
-        while (rentals.hasMoreElements()) {
-            double thisAmount = 0;
-            Rental each = (Rental) rentals.nextElement();
-
-```
-> to
-```java
-public class Customer {
-    private String _name;
-    private ArrayList<Rental> _rentals = new ArrayList<>();
-
-    public Customer(String name) {
-        _name = name;
-    }
-
-    public String statement() {
-        double totalAmount = 0;
-        int frequentRenterPoints = 0;
-        Iterator<Rental> rentals = _rentals.iterator();
-        String result = "Rental Record for " + getName() + "\n";
-        while (rentals.hasNext()) {
-            Rental each = rentals.next();
-```
-
-
-Appending String.valueOf() to a String decreases the code readability.
-The argument passed to String.valueOf() should be directly appended instead.
-> from
-```java
-private String printFiguresForRental(String result, String title, double thisAmount) {
-    return result + ("\t" + title + "\t" + String.valueOf(thisAmount) + "\n");
-}
-
-private String getFooterLines(double totalAmount, int frequentRenterPoints, String result) {
-    return result
-            + "Amount owed is " + String.valueOf(totalAmount) + "\n"
-            + "You earned " + String.valueOf(frequentRenterPoints)
-            + " frequent renter points";
-}
-```
-> to
-```java
-private String printFiguresForRental(String result, String title, double thisAmount) {
-    return result + ("\t" + title + "\t" + thisAmount + "\n");
-}
-
-private String getFooterLines(double totalAmount, int frequentRenterPoints, String result) {
-    return result
-            + "Amount owed is " + totalAmount + "\n"
-            + "You earned " + frequentRenterPoints
-            + " frequent renter points";
-}
-```
-
