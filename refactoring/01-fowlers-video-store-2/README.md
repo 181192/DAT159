@@ -1,6 +1,8 @@
 # DAT159 Refactoring -  Oblig 01
 ##### *By Kristoffer-Andre Kalliainen (181192)*
 
+## Part 1 - Refactoring steps
+
 Extracting the switch case to its own method `determineAmount()`, but before extracting the method I extracted
 the `each.getMovie().getPricecode()` and `each.getDaysRented()` into separate variables.
 > from
@@ -229,7 +231,7 @@ private String printFiguresForRental(String result, String title, double thisAmo
 }
 ```
 
-# Final Result
+## Final Result
 
 > `Customer.java`
 
@@ -403,3 +405,27 @@ public class Rental {
 }
 
 ```
+
+## Part 2 - Measure SLOC and McCabe's Cyclomatic Complexity on `Customer.statement()` method
+The SLOC - Source lines of code before was 43 lines. After the refactoring the number of lines is now 21. 
+So by refactoring we reduced the lines of code with 49%.
+
+The Cyclomatic Complexity is measured by the number of linearly independent paths through a program's source code.
+The complexity **M** is defined as `M = E − N + 2` for a single method.
+
+Where 
+- E = the number of edges of the graph
+- N = the number of nodes of the graph
+
+
+Before the refactoring the Complexity was 9.
+
+30 number of edges - 23 number of nodes + 2 = 9
+
+![before](https://github.com/181192/DAT159/blob/master/refactoring/01-fowlers-video-store-2/before.png)
+
+After the refactoring the complexity was 2.
+
+17 number of edges - 17 number of nodes + 2 = 2
+
+![after](https://github.com/181192/DAT159/blob/master/refactoring/01-fowlers-video-store-2/after.png)
