@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html >
+  <head>
+    <meta charset="UTF-8">
+    
+    <title>EQ Zoomable Sunburst with LOC and size metrics</title>
+    <link rel="stylesheet" href="../../main_report/html/css/style.css">
+    <link href='../../main_report/html/css/helptip.css' rel='stylesheet' type='text/css'>
+	<script src="../../main_report/html/js/metric_definitions.js"></script>
+   <style>
+
+.body {
+  display: block;
+  margin: auto;
+  margin-top: 40px;
+  width: 70%;
+  float: left;
+}
+label {
+    display:block;
+}
+.metricchart {
+  display: inline-block;
+}
+</style>
+
+  </head>
+
+  <body>
+  
+    <div id="body" class="text-center"/>
+	      <div id="tooltipxx" class="tooltipxx" style="position: absolute; opacity: 0;" >  
+	 		 <p><span id="name"></span></p>
+	 		</div>
+    </div>
+	
+	<table style="width:100%">
+	<tr>
+		<td colspan="2">
+			<div style="float:left;margin-right:10px;display: inline-block;">
+			<label><b>Class Metric</b></label>
+			<select id="ClassMSel" name="ClassMSel" 	onchange="EQ_updateSelectedMetric('ClassMSel',paintCallBack)"></select>
+			<a class="help-tip" id="metrictooltip"></a>
+			</div>
+			<div style="float:left;margin-right:10px;display: inline-block;">			
+			<label><b>Package Metric</b></label>
+			<select id="PackageMSel" name="PackageMSel" onchange="EQ_updateSelectedMetric('PackageMSel',paintCallBack)"></select>
+			<a class="help-tip" id="package_metrictooltip"></a>
+			</div>
+			<div style="float:left;margin-right:10px;display: inline-block">
+			<label><b>Project Metric</b></label>
+			<select id="ProjectMSel" name="ProjectMSel" onchange="EQ_updateSelectedMetric('ProjectMSel',paintCallBack)"></select>
+			<a class="help-tip" id="project_metrictooltip"></a>	
+			</div>
+			<div style="float:left;margin-right:10px;display: inline-block">
+			<label><b>&nbsp;</b></label>
+			<label><input type="checkbox" name="showmetricchart" onclick='eQ.MetricChart.handleMBCheckBox(this);'>Show Metric Chart</label>
+			</div>
+		</td>
+	</tr>
+	<tr>
+	    	<td align="left">
+			<div id="mainchartbody"></div>
+			</td>
+		   <td align="left" valign=top>
+    		 <!--remove display none if you want to place metric chart-->
+	 		 <div id="metricchart" class="metricchart" style="display: none;"> </div>
+			</td>
+    </tr>
+    
+	</table>
+	 
+	    	 <link href='../../main_report/html/css/barchartstyle.css' rel='stylesheet' type='text/css'>
+     					
+     		<script src="../../main_report/html/js/d3.min.js"></script>  
+	 		<script src="../../main_report/html/js/d3.tip.v0.6.3.js"></script>
+     		<script src="../../main_report/html/js/eq.js"></script>
+     		<script src="modeldata/defaultclassmetrics.js"></script>
+     		<script src="../../main_report/html/js/metricchart.js"></script>
+     		<script src="modeldata/sunburst_data.js"></script>
+     		<script src="../../main_report/html/js/sunburst.js"></script>  
+     		
+
+        
+  </body>
+</html>
