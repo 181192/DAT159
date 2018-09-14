@@ -210,7 +210,8 @@ private String getFooterLines(double totalAmount, int frequentRenterPoints, Stri
 }
 ```
 
-Extracting the result string to its own method
+Extracting the result string to its own method, and removing String.valueOf, since its not
+doing any thing in this case, we can easily print out double in Java 8 without wrapping it.
 
 > from
 
@@ -224,27 +225,49 @@ result += ("\t" + title + "\t" + String.valueOf(thisAmount) + "\n");
 
 
 ```java
-result += printFiguresForRental(result, title, thisAmount);
+result += printFiguresForRental(title, thisAmount);
 
 
 private String printFiguresForRental(String result, String title, double thisAmount) {
-    return result + ("\t" + title + "\t" + String.valueOf(thisAmount) + "\n");
+    return "\t" + title + "\t" + thisAmount + "\n";
 }
 ```
+
+Since I was using the Extract Variable strategy it left me with some parameters that was no longer
+in use after I implemented polymorphism.
+
+> from
+```java
+// Customer.class
+int priceCode = movie.getPriceCode();
+frequentRenterPoints += movie.getFrequentRenterPoints(frequentRenterPoints, priceCode, daysRented);
+
+
+// Movie.class
+public int getFrequentRenterPoints(int frequentRenterPoints, int daysRented) {
+    return ++frequentRenterPoints;
+}
+
+// NewRelease.class
+@Override
+public int getFrequentRenterPoints(int frequentRenterPoints, int priceCode, int daysRented) {
+    // add frequent renter points
+    frequentRenterPoints++;
+    // add bonus for a two day new release rental
+    if (daysRented > 1) frequentRenterPoints++;
+    return frequentRenterPoints;
+}
+```
+
 
 ## Final Result
 
 > `Customer.java`
 
 ```java
-package net.jeremykendall.refactoring.videostore;
-
-import java.util.Enumeration;
-import java.util.Vector;
-
 public class Customer {
     private String _name;
-    private Vector _rentals = new Vector();
+    private ArrayList<Rental> _rentals = new ArrayList<>();
 
     public Customer(String name) {
         _name = name;
@@ -253,38 +276,37 @@ public class Customer {
     public String statement() {
         double totalAmount = 0;
         int frequentRenterPoints = 0;
-        Enumeration rentals = _rentals.elements();
+        Iterator<Rental> rentals = _rentals.iterator();
         String result = "Rental Record for " + getName() + "\n";
-        while (rentals.hasMoreElements()) {
-            Rental each = (Rental) rentals.nextElement();
+        while (rentals.hasNext()) {
+            Rental each = rentals.next();
             int daysRented = each.getDaysRented();
             Movie movie = each.getMovie();
 
-            int priceCode = movie.getPriceCode();
-            frequentRenterPoints += movie.getFrequentRenterPoints(frequentRenterPoints, priceCode, daysRented);
+            frequentRenterPoints += movie.getFrequentRenterPoints(frequentRenterPoints, daysRented);
 
             String title = movie.getTitle();
             double thisAmount = movie.determineAmount(daysRented);
-            result += printFiguresForRental(result, title, thisAmount);
+            result += printFiguresForRental(title, thisAmount);
             totalAmount += thisAmount;
         }
         result += getFooterLines(totalAmount, frequentRenterPoints, result);
         return result;
     }
 
-    private String printFiguresForRental(String result, String title, double thisAmount) {
-        return result + ("\t" + title + "\t" + String.valueOf(thisAmount) + "\n");
+    private String printFiguresForRental(String title, double thisAmount) {
+        return ("\t" + title + "\t" + thisAmount + "\n");
     }
 
     private String getFooterLines(double totalAmount, int frequentRenterPoints, String result) {
         return result
-                + "Amount owed is " + String.valueOf(totalAmount) + "\n"
-                + "You earned " + String.valueOf(frequentRenterPoints)
+                + "Amount owed is " + totalAmount + "\n"
+                + "You earned " + frequentRenterPoints
                 + " frequent renter points";
     }
 
     public void addRental(Rental arg) {
-        _rentals.addElement(arg);
+        _rentals.add(arg);
     }
 
     public String getName() {
@@ -297,8 +319,6 @@ public class Customer {
 > `Movie.java` 
 
 ```java
-package net.jeremykendall.refactoring.videostore;
-
 public abstract class Movie {
 
     private String _title;
@@ -323,7 +343,7 @@ public abstract class Movie {
 
     public abstract double determineAmount(int daysRented);
 
-    public int getFrequentRenterPoints(int frequentRenterPoints, int priceCode, int daysRented) {
+    public int getFrequentRenterPoints(int frequentRenterPoints, int daysRented) {
         return ++frequentRenterPoints;
     }
 
@@ -370,7 +390,7 @@ public abstract class Movie {
         }
 
         @Override
-        public int getFrequentRenterPoints(int frequentRenterPoints, int priceCode, int daysRented) {
+        public int getFrequentRenterPoints(int frequentRenterPoints, int daysRented) {
             // add frequent renter points
             frequentRenterPoints++;
             // add bonus for a two day new release rental
@@ -385,8 +405,6 @@ public abstract class Movie {
 > `Rental.java`
 
 ```java
-package net.jeremykendall.refactoring.videostore;
-
 public class Rental {
     private Movie _movie;
     private int _daysRented;
@@ -430,3 +448,112 @@ After the refactoring the complexity was 2.
 17 number of edges - 17 number of nodes + 2 = 2
 
 ![after](https://github.com/181192/DAT159/raw/master/refactoring/01-fowlers-video-store/after.png)
+
+
+The tools that was used was [code2flow](https://code2flow.com/app) to draw the graph, and 
+[lizard.ws](http://www.lizard.ws/) to check the Cyclomatic Complexity.
+
+## Part 3 - PullUp Method going wrong
+
+If we imagine that we have a SuperDuper class that is on top in the hierarchy, this SuperDuper class have a method 
+`magic(int x)` who takes in an integer and does something magic. Underneath we have a Super class who inheritance from
+SuperDuper class. And Super class has to children Foo and Bar.
+Let us imagine that `Bar.magix(int x)` is a new method in class Bar, and now we want to refactor and move it up to the 
+Super class..  
+```java
+public class SuperDuper {
+    public int magic(int x) {
+        return x + 1;
+    }
+}
+
+class Super extends SuperDuper {}
+
+class Foo extends Super {
+    @Override
+    public int magic(int x) {
+        return super.magic(x) + 1;
+    }
+}
+
+class Bar extends Super {
+    @Override
+    public int magic(int x) {
+        return super.magic(x) + 2;
+    }
+}
+```
+
+Before the refactoring Unit test passes.
+```java
+public class SuperDuperTest {
+
+    private final int X = 1;
+    private SuperDuper omg;
+    private Foo foo;
+    private Bar bar;
+
+    @Before
+    public void setUp() throws Exception {
+        omg = new SuperDuper();
+        foo = new Foo();
+        bar = new Bar();
+    }
+
+    @Test
+    public void whatIsMagicXSuperDuper() {
+        assertEquals(2, omg.magic(X));
+    }
+
+    @Test
+    public void whatIsMagicXFoo() {
+        assertEquals(3, foo.magic(X));
+    }
+
+    @Test
+    public void whatIsMagicXBar() {
+        assertEquals(4, bar.magic(X));
+    }
+}
+```
+
+
+![beforeResult](https://github.com/181192/DAT159/raw/master/refactoring/01-fowlers-video-store/beforeMagicRefactoring.png)
+
+
+So then we do the refactoring, we move the `bar.magic(int x)` up to the Super class
+```java
+public class SuperDuper {
+
+    public int magic(int x) {
+        return x + 1;
+    }
+}
+
+class Super extends SuperDuper {
+    @Override
+    public int magic(int x) {
+        return super.magic(x) + 2;
+    }
+}
+
+class Foo extends Super {
+    @Override
+    public int magic(int x) {
+        return super.magic(x) + 1;
+    }
+}
+
+class Bar extends Super {}
+```
+
+And run the Unit test again:
+
+
+![afterResult](https://github.com/181192/DAT159/raw/master/refactoring/01-fowlers-video-store/afterMagicRefactoring.png)
+
+
+
+Then we see that `whatIsMagicXFoo()` is returning 5 instead of 3.
+But the Bar class is still working properly, so if we had forgotten to Unit test the Foo class,
+we would never notice that we messed up our code by moving the `magix(int x)` method up the hierarchy
