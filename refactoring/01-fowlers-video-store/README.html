@@ -199,7 +199,8 @@ result += <span class="hljs-string">"You earned "</span> + String.valueOf(freque
     <span class="hljs-keyword">return</span> result;
 }
 </code></pre>
-<p>Extracting the result string to its own method</p>
+<p>Extracting the result string to its own method, and removing String.valueOf, since its not<br>
+doing any thing in this case, we can easily print out double in Java 8 without wrapping it.</p>
 <blockquote>
 <p>from</p>
 </blockquote>
@@ -209,25 +210,45 @@ result += <span class="hljs-string">"You earned "</span> + String.valueOf(freque
 <blockquote>
 <p>to</p>
 </blockquote>
-<pre><code class="language-java">result += printFiguresForRental(result, title, thisAmount);
+<pre><code class="language-java">result += printFiguresForRental(title, thisAmount);
 
 
 <span class="hljs-function"><span class="hljs-keyword">private</span> String <span class="hljs-title">printFiguresForRental</span><span class="hljs-params">(String result, String title, <span class="hljs-keyword">double</span> thisAmount)</span> </span>{
-    <span class="hljs-keyword">return</span> result + (<span class="hljs-string">"\t"</span> + title + <span class="hljs-string">"\t"</span> + String.valueOf(thisAmount) + <span class="hljs-string">"\n"</span>);
+    <span class="hljs-keyword">return</span> <span class="hljs-string">"\t"</span> + title + <span class="hljs-string">"\t"</span> + thisAmount + <span class="hljs-string">"\n"</span>;
 }
 </code></pre>
-<h2><a id="Final_Result_234"></a>Final Result</h2>
+<p>Since I was using the Extract Variable strategy it left me with some parameters that was no longer<br>
+in use after I implemented polymorphism.</p>
+<blockquote>
+<p>from</p>
+</blockquote>
+<pre><code class="language-java"><span class="hljs-comment">// Customer.class</span>
+<span class="hljs-keyword">int</span> priceCode = movie.getPriceCode();
+frequentRenterPoints += movie.getFrequentRenterPoints(frequentRenterPoints, priceCode, daysRented);
+
+
+<span class="hljs-comment">// Movie.class</span>
+<span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">int</span> <span class="hljs-title">getFrequentRenterPoints</span><span class="hljs-params">(<span class="hljs-keyword">int</span> frequentRenterPoints, <span class="hljs-keyword">int</span> daysRented)</span> </span>{
+    <span class="hljs-keyword">return</span> ++frequentRenterPoints;
+}
+
+<span class="hljs-comment">// NewRelease.class</span>
+<span class="hljs-annotation">@Override</span>
+<span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">int</span> <span class="hljs-title">getFrequentRenterPoints</span><span class="hljs-params">(<span class="hljs-keyword">int</span> frequentRenterPoints, <span class="hljs-keyword">int</span> priceCode, <span class="hljs-keyword">int</span> daysRented)</span> </span>{
+    <span class="hljs-comment">// add frequent renter points</span>
+    frequentRenterPoints++;
+    <span class="hljs-comment">// add bonus for a two day new release rental</span>
+    <span class="hljs-keyword">if</span> (daysRented &gt; <span class="hljs-number">1</span>) frequentRenterPoints++;
+    <span class="hljs-keyword">return</span> frequentRenterPoints;
+}
+</code></pre>
+<h2><a id="Final_Result_262"></a>Final Result</h2>
 <blockquote>
 <p><code>Customer.java</code></p>
 </blockquote>
-<pre><code class="language-java"><span class="hljs-keyword">package</span> net.jeremykendall.refactoring.videostore;
-
-<span class="hljs-keyword">import</span> java.util.Enumeration;
-<span class="hljs-keyword">import</span> java.util.Vector;
-
-<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Customer</span> </span>{
+<pre><code class="language-java"><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Customer</span> </span>{
     <span class="hljs-keyword">private</span> String _name;
-    <span class="hljs-keyword">private</span> Vector _rentals = <span class="hljs-keyword">new</span> Vector();
+    <span class="hljs-keyword">private</span> ArrayList&lt;Rental&gt; _rentals = <span class="hljs-keyword">new</span> ArrayList&lt;&gt;();
 
     <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">Customer</span><span class="hljs-params">(String name)</span> </span>{
         _name = name;
@@ -236,38 +257,37 @@ result += <span class="hljs-string">"You earned "</span> + String.valueOf(freque
     <span class="hljs-function"><span class="hljs-keyword">public</span> String <span class="hljs-title">statement</span><span class="hljs-params">()</span> </span>{
         <span class="hljs-keyword">double</span> totalAmount = <span class="hljs-number">0</span>;
         <span class="hljs-keyword">int</span> frequentRenterPoints = <span class="hljs-number">0</span>;
-        Enumeration rentals = _rentals.elements();
+        Iterator&lt;Rental&gt; rentals = _rentals.iterator();
         String result = <span class="hljs-string">"Rental Record for "</span> + getName() + <span class="hljs-string">"\n"</span>;
-        <span class="hljs-keyword">while</span> (rentals.hasMoreElements()) {
-            Rental each = (Rental) rentals.nextElement();
+        <span class="hljs-keyword">while</span> (rentals.hasNext()) {
+            Rental each = rentals.next();
             <span class="hljs-keyword">int</span> daysRented = each.getDaysRented();
             Movie movie = each.getMovie();
 
-            <span class="hljs-keyword">int</span> priceCode = movie.getPriceCode();
-            frequentRenterPoints += movie.getFrequentRenterPoints(frequentRenterPoints, priceCode, daysRented);
+            frequentRenterPoints += movie.getFrequentRenterPoints(frequentRenterPoints, daysRented);
 
             String title = movie.getTitle();
             <span class="hljs-keyword">double</span> thisAmount = movie.determineAmount(daysRented);
-            result += printFiguresForRental(result, title, thisAmount);
+            result += printFiguresForRental(title, thisAmount);
             totalAmount += thisAmount;
         }
         result += getFooterLines(totalAmount, frequentRenterPoints, result);
         <span class="hljs-keyword">return</span> result;
     }
 
-    <span class="hljs-function"><span class="hljs-keyword">private</span> String <span class="hljs-title">printFiguresForRental</span><span class="hljs-params">(String result, String title, <span class="hljs-keyword">double</span> thisAmount)</span> </span>{
-        <span class="hljs-keyword">return</span> result + (<span class="hljs-string">"\t"</span> + title + <span class="hljs-string">"\t"</span> + String.valueOf(thisAmount) + <span class="hljs-string">"\n"</span>);
+    <span class="hljs-function"><span class="hljs-keyword">private</span> String <span class="hljs-title">printFiguresForRental</span><span class="hljs-params">(String title, <span class="hljs-keyword">double</span> thisAmount)</span> </span>{
+        <span class="hljs-keyword">return</span> (<span class="hljs-string">"\t"</span> + title + <span class="hljs-string">"\t"</span> + thisAmount + <span class="hljs-string">"\n"</span>);
     }
 
     <span class="hljs-function"><span class="hljs-keyword">private</span> String <span class="hljs-title">getFooterLines</span><span class="hljs-params">(<span class="hljs-keyword">double</span> totalAmount, <span class="hljs-keyword">int</span> frequentRenterPoints, String result)</span> </span>{
         <span class="hljs-keyword">return</span> result
-                + <span class="hljs-string">"Amount owed is "</span> + String.valueOf(totalAmount) + <span class="hljs-string">"\n"</span>
-                + <span class="hljs-string">"You earned "</span> + String.valueOf(frequentRenterPoints)
+                + <span class="hljs-string">"Amount owed is "</span> + totalAmount + <span class="hljs-string">"\n"</span>
+                + <span class="hljs-string">"You earned "</span> + frequentRenterPoints
                 + <span class="hljs-string">" frequent renter points"</span>;
     }
 
     <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">addRental</span><span class="hljs-params">(Rental arg)</span> </span>{
-        _rentals.addElement(arg);
+        _rentals.add(arg);
     }
 
     <span class="hljs-function"><span class="hljs-keyword">public</span> String <span class="hljs-title">getName</span><span class="hljs-params">()</span> </span>{
@@ -279,9 +299,7 @@ result += <span class="hljs-string">"You earned "</span> + String.valueOf(freque
 <blockquote>
 <p><code>Movie.java</code></p>
 </blockquote>
-<pre><code class="language-java"><span class="hljs-keyword">package</span> net.jeremykendall.refactoring.videostore;
-
-<span class="hljs-keyword">public</span> <span class="hljs-keyword">abstract</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Movie</span> </span>{
+<pre><code class="language-java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">abstract</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Movie</span> </span>{
 
     <span class="hljs-keyword">private</span> String _title;
     <span class="hljs-keyword">private</span> <span class="hljs-keyword">int</span> _priceCode;
@@ -305,7 +323,7 @@ result += <span class="hljs-string">"You earned "</span> + String.valueOf(freque
 
     <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">abstract</span> <span class="hljs-keyword">double</span> <span class="hljs-title">determineAmount</span><span class="hljs-params">(<span class="hljs-keyword">int</span> daysRented)</span></span>;
 
-    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">int</span> <span class="hljs-title">getFrequentRenterPoints</span><span class="hljs-params">(<span class="hljs-keyword">int</span> frequentRenterPoints, <span class="hljs-keyword">int</span> priceCode, <span class="hljs-keyword">int</span> daysRented)</span> </span>{
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">int</span> <span class="hljs-title">getFrequentRenterPoints</span><span class="hljs-params">(<span class="hljs-keyword">int</span> frequentRenterPoints, <span class="hljs-keyword">int</span> daysRented)</span> </span>{
         <span class="hljs-keyword">return</span> ++frequentRenterPoints;
     }
 
@@ -352,7 +370,7 @@ result += <span class="hljs-string">"You earned "</span> + String.valueOf(freque
         }
 
         <span class="hljs-annotation">@Override</span>
-        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">int</span> <span class="hljs-title">getFrequentRenterPoints</span><span class="hljs-params">(<span class="hljs-keyword">int</span> frequentRenterPoints, <span class="hljs-keyword">int</span> priceCode, <span class="hljs-keyword">int</span> daysRented)</span> </span>{
+        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">int</span> <span class="hljs-title">getFrequentRenterPoints</span><span class="hljs-params">(<span class="hljs-keyword">int</span> frequentRenterPoints, <span class="hljs-keyword">int</span> daysRented)</span> </span>{
             <span class="hljs-comment">// add frequent renter points</span>
             frequentRenterPoints++;
             <span class="hljs-comment">// add bonus for a two day new release rental</span>
@@ -366,9 +384,7 @@ result += <span class="hljs-string">"You earned "</span> + String.valueOf(freque
 <blockquote>
 <p><code>Rental.java</code></p>
 </blockquote>
-<pre><code class="language-java"><span class="hljs-keyword">package</span> net.jeremykendall.refactoring.videostore;
-
-<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Rental</span> </span>{
+<pre><code class="language-java"><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Rental</span> </span>{
     <span class="hljs-keyword">private</span> Movie _movie;
     <span class="hljs-keyword">private</span> <span class="hljs-keyword">int</span> _daysRented;
 
@@ -387,7 +403,7 @@ result += <span class="hljs-string">"You earned "</span> + String.valueOf(freque
 }
 
 </code></pre>
-<h2><a id="Part_2__Measure_SLOC_and_McCabes_Cyclomatic_Complexity_on_Customerstatement_method_409"></a>Part 2 - Measure SLOC and McCabe’s Cyclomatic Complexity on <code>Customer.statement()</code> method</h2>
+<h2><a id="Part_2__Measure_SLOC_and_McCabes_Cyclomatic_Complexity_on_Customerstatement_method_427"></a>Part 2 - Measure SLOC and McCabe’s Cyclomatic Complexity on <code>Customer.statement()</code> method</h2>
 <p>The SLOC - Source lines of code before was 43 lines. After the refactoring the number of lines is now 21.<br>
 So by refactoring we reduced the lines of code with 49%.</p>
 <p>The Cyclomatic Complexity is measured by the number of linearly independent paths through a program’s source code.<br>
@@ -399,9 +415,100 @@ The complexity <strong>M</strong> is defined as <code>M = E − N + 2</code> for
 </ul>
 <p>Before the refactoring the Complexity was 9.</p>
 <p>30 number of edges - 23 number of nodes + 2 = 9</p>
-<p><img src="https://github.com/181192/DAT159/raw/master/refactoring/01-fowlers-video-store/before.png" alt="before" width="400"></p>
+<p><img src="https://github.com/181192/DAT159/raw/master/refactoring/01-fowlers-video-store/before.png" alt="before"></p>
 <p>After the refactoring the complexity was 2.</p>
 <p>17 number of edges - 17 number of nodes + 2 = 2</p>
-<p><img src="https://github.com/181192/DAT159/raw/master/refactoring/01-fowlers-video-store/after.png" alt="after" width="400"></p>
+<p><img src="https://github.com/181192/DAT159/raw/master/refactoring/01-fowlers-video-store/after.png" alt="after"></p>
+<p>The tools that was used was <a href="https://code2flow.com/app">code2flow</a> to draw the graph, and<br>
+<a href="http://www.lizard.ws/">lizard.ws</a> to check the Cyclomatic Complexity.</p>
+<h2><a id="Part_3__PullUp_Method_going_wrong_455"></a>Part 3 - PullUp Method going wrong</h2>
+<p>If we imagine that we have a SuperDuper class that is on top in the hierarchy, this SuperDuper class have a method<br>
+<code>magic(int x)</code> who takes in an integer and does something magic. Underneath we have a Super class who inheritance from<br>
+SuperDuper class. And Super class has to children Foo and Bar.<br>
+Let us imagine that <code>Bar.magix(int x)</code> is a new method in class Bar, and now we want to refactor and move it up to the<br>
+Super class…</p>
+<pre><code class="language-java"><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">SuperDuper</span> </span>{
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">int</span> <span class="hljs-title">magic</span><span class="hljs-params">(<span class="hljs-keyword">int</span> x)</span> </span>{
+        <span class="hljs-keyword">return</span> x + <span class="hljs-number">1</span>;
+    }
+}
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Super</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">SuperDuper</span> </span>{}
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Foo</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">Super</span> </span>{
+    <span class="hljs-annotation">@Override</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">int</span> <span class="hljs-title">magic</span><span class="hljs-params">(<span class="hljs-keyword">int</span> x)</span> </span>{
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">super</span>.magic(x) + <span class="hljs-number">1</span>;
+    }
+}
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Bar</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">Super</span> </span>{
+    <span class="hljs-annotation">@Override</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">int</span> <span class="hljs-title">magic</span><span class="hljs-params">(<span class="hljs-keyword">int</span> x)</span> </span>{
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">super</span>.magic(x) + <span class="hljs-number">2</span>;
+    }
+}
+</code></pre>
+<p>Before the refactoring Unit test passes.</p>
+<pre><code class="language-java"><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">SuperDuperTest</span> </span>{
+
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> X = <span class="hljs-number">1</span>;
+    <span class="hljs-keyword">private</span> SuperDuper omg;
+    <span class="hljs-keyword">private</span> Foo foo;
+    <span class="hljs-keyword">private</span> Bar bar;
+
+    <span class="hljs-annotation">@Before</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">setUp</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception </span>{
+        omg = <span class="hljs-keyword">new</span> SuperDuper();
+        foo = <span class="hljs-keyword">new</span> Foo();
+        bar = <span class="hljs-keyword">new</span> Bar();
+    }
+
+    <span class="hljs-annotation">@Test</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">whatIsMagicXSuperDuper</span><span class="hljs-params">()</span> </span>{
+        assertEquals(<span class="hljs-number">2</span>, omg.magic(X));
+    }
+
+    <span class="hljs-annotation">@Test</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">whatIsMagicXFoo</span><span class="hljs-params">()</span> </span>{
+        assertEquals(<span class="hljs-number">3</span>, foo.magic(X));
+    }
+
+    <span class="hljs-annotation">@Test</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">whatIsMagicXBar</span><span class="hljs-params">()</span> </span>{
+        assertEquals(<span class="hljs-number">4</span>, bar.magic(X));
+    }
+}
+</code></pre>
+<p><img src="https://github.com/181192/DAT159/raw/master/refactoring/01-fowlers-video-store/beforeMagicRefactoring.png" alt="beforeResult"></p>
+<p>So then we do the refactoring, we move the <code>bar.magic(int x)</code> up to the Super class</p>
+<pre><code class="language-java"><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">SuperDuper</span> </span>{
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">int</span> <span class="hljs-title">magic</span><span class="hljs-params">(<span class="hljs-keyword">int</span> x)</span> </span>{
+        <span class="hljs-keyword">return</span> x + <span class="hljs-number">1</span>;
+    }
+}
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Super</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">SuperDuper</span> </span>{
+    <span class="hljs-annotation">@Override</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">int</span> <span class="hljs-title">magic</span><span class="hljs-params">(<span class="hljs-keyword">int</span> x)</span> </span>{
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">super</span>.magic(x) + <span class="hljs-number">2</span>;
+    }
+}
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Foo</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">Super</span> </span>{
+    <span class="hljs-annotation">@Override</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">int</span> <span class="hljs-title">magic</span><span class="hljs-params">(<span class="hljs-keyword">int</span> x)</span> </span>{
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">super</span>.magic(x) + <span class="hljs-number">1</span>;
+    }
+}
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Bar</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">Super</span> </span>{}
+</code></pre>
+<p>And run the Unit test again:</p>
+<p><img src="https://github.com/181192/DAT159/raw/master/refactoring/01-fowlers-video-store/afterMagicRefactoring.png" alt="afterResult"></p>
+<p>Then we see that <code>whatIsMagicXFoo()</code> is returning 5 instead of 3.<br>
+But the Bar class is still working properly, so if we had forgotten to Unit test the Foo class,<br>
+we would never notice that we messed up our code by moving the <code>magix(int x)</code> method up the hierarchy</p>
 
 </body></html>
