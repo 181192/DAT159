@@ -21,20 +21,19 @@ public class Customer {
             int daysRented = each.getDaysRented();
             Movie movie = each.getMovie();
 
-            int priceCode = movie.getPriceCode();
-            frequentRenterPoints += movie.getFrequentRenterPoints(frequentRenterPoints, priceCode, daysRented);
+            frequentRenterPoints += movie.getFrequentRenterPoints(frequentRenterPoints, daysRented);
 
             String title = movie.getTitle();
             double thisAmount = movie.determineAmount(daysRented);
-            result += printFiguresForRental(result, title, thisAmount);
+            result += printFiguresForRental(title, thisAmount);
             totalAmount += thisAmount;
         }
         result += getFooterLines(totalAmount, frequentRenterPoints, result);
         return result;
     }
 
-    private String printFiguresForRental(String result, String title, double thisAmount) {
-        return result + ("\t" + title + "\t" + thisAmount + "\n");
+    private String printFiguresForRental(String title, double thisAmount) {
+        return ("\t" + title + "\t" + thisAmount + "\n");
     }
 
     private String getFooterLines(double totalAmount, int frequentRenterPoints, String result) {

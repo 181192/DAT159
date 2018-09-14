@@ -24,7 +24,7 @@ public abstract class Movie {
 
     public abstract double determineAmount(int daysRented);
 
-    public int getFrequentRenterPoints(int frequentRenterPoints, int priceCode, int daysRented) {
+    public int getFrequentRenterPoints(int frequentRenterPoints, int daysRented) {
         return ++frequentRenterPoints;
     }
 
@@ -71,7 +71,7 @@ public abstract class Movie {
         }
 
         @Override
-        public int getFrequentRenterPoints(int frequentRenterPoints, int priceCode, int daysRented) {
+        public int getFrequentRenterPoints(int frequentRenterPoints, int daysRented) {
             // add frequent renter points
             frequentRenterPoints++;
             // add bonus for a two day new release rental
