@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/00-fowlers-video-store-original.iml" filepath="$PROJECT_DIR$/.idea/00-fowlers-video-store-original.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/00-fowlers-video-store-original_main.iml" filepath="$PROJECT_DIR$/.idea/modules/00-fowlers-video-store-original_main.iml" group="00-fowlers-video-store-original" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/00-fowlers-video-store-original_test.iml" filepath="$PROJECT_DIR$/.idea/modules/00-fowlers-video-store-original_test.iml" group="00-fowlers-video-store-original" />
+    </modules>
+  </component>
+</project>
