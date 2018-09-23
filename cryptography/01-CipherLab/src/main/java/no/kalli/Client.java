@@ -17,7 +17,7 @@ import java.nio.charset.StandardCharsets;
 public class Client implements IParent {
 	
 	public static void main(String[] args){
-		Client client = new Client();
+		var client = new Client();
 		client.sendAndReceice();
 	}
 	

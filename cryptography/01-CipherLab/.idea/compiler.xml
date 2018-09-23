@@ -10,7 +10,7 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="01-CipherLab" target="6" />
+      <module name="01-CipherLab" target="10" />
     </bytecodeTargetLevel>
   </component>
 </project>
