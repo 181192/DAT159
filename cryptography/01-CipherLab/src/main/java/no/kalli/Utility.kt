@@ -3,41 +3,62 @@
  */
 package no.kalli
 
+import java.nio.charset.Charset
+import java.math.BigInteger
+
+
 /**
  * @author Kristoffer-Andre Kalliainen
  */
 
-data class Utility(val msg: String, val cipher: Cipher)
+data class Affine(val a: Int, val b: Int, val msg: String, var enc: String) : Cipher {
 
-data class Affine(val a: Int, val b: Int) : Cipher {
-
-    override infix fun encrypt(msg: String): String {
-        return encryptMessage(msg.toByteArray()).toString()
+    override fun encrypt(): String {
+        return encryptMessage(msg.toByteArray(Charsets.UTF_8)).toString(Charsets.UTF_8)
     }
 
-    override infix fun decrypt(msg: String): String {
-        return decryptMessage(msg.toByteArray()).toString()
+    override fun decrypt(): String {
+        return decryptMessage(enc.toByteArray(Charsets.UTF_8)).toString(Charsets.UTF_8)
     }
 
     override fun encryptMessage(plaintext: ByteArray): ByteArray {
         var res = ""
-        plaintext.toString().forEach {
-            res += ('A' + (a * it.toInt() + b) % 26)
-        }
+        val len = plaintext.toString(Charsets.UTF_8)
+        for (c in len)
+//            res += ((a * (c - 'a') + b) % 26 + 'a').toChar()
+
+        println(res)
+        enc = res
         return res.toByteArray()
     }
 
     override fun decryptMessage(ciphertext: ByteArray): ByteArray {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        var res = ""
+
+        val inverse = BigInteger.valueOf(a.toLong()).modInverse(BigInteger.valueOf(26))
+
+        val c = ciphertext.toString(Charsets.UTF_8)
+
+        c.forEach {
+            val decoded = inverse.toInt() * (it - 'a' - b + 26)
+            res  += (decoded % 26 + 'a'.toInt()).toChar()
+        }
+
+        println(res)
+        return res.toByteArray(Charsets.UTF_8)
+    }
+
+    private fun gcd(a: Int, b: Int): Int {
+        return if (b != 0) gcd(b, a % b) else a
     }
 }
 
-data class Hill(val a: Int, val b: Int) : Cipher {
-    override fun encrypt(msg: String): String {
+data class Hill(val a: Int, val b: Int, val msg: String) : Cipher {
+    override fun encrypt(): String {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun decrypt(msg: String): String {
+    override fun decrypt(): String {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
@@ -51,86 +72,60 @@ data class Hill(val a: Int, val b: Int) : Cipher {
 }
 
 interface Cipher : IParent {
-    infix fun encrypt(msg: String): String
-    infix fun decrypt(msg: String): String
+    fun encrypt(): String
+    fun decrypt(): String
 }
 
 @DslMarker
 annotation class EncryptDsl
 
 @EncryptDsl
-class UtilityBuilder(initialMsg: String, initialCipher: Cipher) {
-    var msg: String = initialMsg
-    var cipher = initialCipher
-
-    fun build(): Utility {
-        return Utility(msg, cipher)
-    }
-
-    fun affine(a: Int = 0, b: Int = 0, setup: AffineBuilder.() -> Unit) {
-        val builder = AffineBuilder(a, b)
-        builder.setup()
-        cipher = builder.build()
-    }
-
-    fun hill(a: Int = 0, b: Int = 0, setup: HillBuilder.() -> Unit) {
-        val builder = HillBuilder(a, b)
-        builder.setup()
-        cipher = builder.build()
-    }
-
-}
-
-@EncryptDsl
-class AffineBuilder(initialA: Int, initialB: Int) {
+class AffineBuilder(initialA: Int, initialB: Int, initialMsg: String) {
     var a: Int = initialA
     var b: Int = initialB
+    var msg: String = initialMsg
 
     fun build(): Affine {
-        return Affine(a, b)
+        return Affine(a, b, msg, "")
     }
 }
 
 @EncryptDsl
-class HillBuilder(initialA: Int, initialB: Int) {
+class HillBuilder(initialA: Int, initialB: Int, initialMsg: String) {
     var a: Int = initialA
     var b: Int = initialB
+    var msg: String = initialMsg
 
     fun build(): Hill {
-        return Hill(a, b)
+        return Hill(a, b, msg)
     }
 }
 
 @EncryptDsl
-fun utility(msg: String = "Test", c: Cipher = Affine(5, 8), setup: UtilityBuilder.() -> Unit = {}): Cipher {
-    val utilityBuilder = UtilityBuilder(msg, c)
-    utilityBuilder.setup()
-    return utilityBuilder.build().cipher
+fun affine(a: Int = 0, b: Int = 0, msg: String = "", setup: AffineBuilder.() -> Unit = {}): Affine {
+    val affineBuilder = AffineBuilder(a, b, msg)
+    affineBuilder.setup()
+    return affineBuilder.build()
+}
+
+@EncryptDsl
+fun hill(a: Int = 0, b: Int = 0, msg: String = "", setup: HillBuilder.() -> Unit = {}): Hill {
+    val hillBuilder = HillBuilder(a, b, msg)
+    hillBuilder.setup()
+    return hillBuilder.build()
 }
 
 fun main(args: Array<String>) {
 
-    val affine = utility {
-        msg = "Test"
-        affine {
-            a = 5
-            b = 8
-        }
+
+    val affine = affine {
+        a = 5
+        b = 7
+        msg = "ILOVEPIZZA"
     }
 
-    val hill = utility {
-        msg = "Test"
-        hill {
-            a = 3
-            b = 6
-        }
-    }
-
-    affine encrypt "Test"
-    affine decrypt "SSDFs"
-
-    hill encrypt "Test"
-    hill decrypt "SSDFA"
+    affine.encrypt()
+    affine.decrypt()
 
 
 }
