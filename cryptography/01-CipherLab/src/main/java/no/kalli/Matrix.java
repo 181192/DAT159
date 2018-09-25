@@ -1,7 +1,6 @@
 package no.kalli;
 
-import org.jetbrains.annotations.NotNull;
-
+import java.util.ArrayList;
 import java.util.Arrays;
 
 public class Matrix {
@@ -80,7 +79,7 @@ public class Matrix {
         for (int i = 0; i < data.length; i++)
             for (int j = 0; j < data[i].length; j++) {
                 double x = data[i][j];
-                data[i][j] = x < 0 ? 26 + x : x;
+                data[i][j] = x < 0 ? x + 26 : x + 1;
             }
     }
 
@@ -110,70 +109,48 @@ public class Matrix {
         return new Matrix(arr);
     }
 
-    private static Matrix multiplyMatrix(Matrix a, Matrix b) {
-        var rowa = b.data.length;
-        var cola = b.data[0].length;
-        var colb = a.data[0].length;
+    public static Matrix multiplyMatrix(Matrix a, Matrix b) {
+        var rowa = a.data.length;
+        var cola = a.data[0].length;
+        var colb = b.data[0].length;
 
-        var c = new Matrix(a.data.length, a.data[0].length);
+        var c = new Matrix(b.data.length, b.data[0].length);
 
         for (int i = 0; i < rowa; i++)
-            for (int j = 0; j < colb; j++)
+            for (int j = 0; j < colb; j++) {
+                c.data[i][j] = 0;
                 for (int k = 0; k < cola; k++)
-                    c.data[i][j] += b.data[i][k] * a.data[k][j];
-
+                    c.data[i][j] += a.data[i][k] * b.data[k][j];
+            }
         return c;
     }
 
-    public static void main(String[] args) {
-
-        // Encrypt
-
-        // Key matrix
-        byte[] keyArr = "PATH".getBytes();
-        Matrix key = createKeyMatrix(keyArr);
-
-        assert (key != null);
-        key.print();
+    public void printLetters() {
+        for (double[] row : data)
+            for (double col : row) System.out.print((char) (col + 'A' + 1));
 
         System.out.println();
+    }
 
-        // From string to Matrix tuplets
-        byte[] msg = "CIPHER".getBytes();
-        Matrix tuplets = createTuples(msg);
-//        for (int i = 0; i < tuplets.length; i++) {
-//            tuplets[i].print();
-//            System.out.println();
-//        }
+    public String toString() {
+        StringBuilder s = new StringBuilder();
+        for (double[] row : data)
+            for (double col : row) s.append((char) (col + 'A' + 1));
 
-        Matrix m_res = multiplyMatrix(tuplets, key);
+        return s.toString();
+    }
 
-//        double[][] res = new double[2][tuplets.length];
-//        for (int i = 0; i < tuplets.length; i++) {
-//            res[0][i] = key.data[0][0] * tuplets[i].data[0][0] + key.data[0][1] * tuplets[i].data[1][0];
-//            res[1][i] = key.data[1][0] * tuplets[i].data[0][0] + key.data[1][1] * tuplets[i].data[1][0];
-//        }
-        System.out.println("lolo");
+    public byte[] toBytes() {
 
-//        Matrix m_res = new Matrix(res);
-        m_res.print();
+        var b = new ArrayList<Byte>();
 
-        System.out.println();
-        m_res.modulo(26);
-        m_res.print();
+        for (double[] row : data)
+            for (double col : row) b.add((byte) (col + 'A'));
 
-        // Decrypt
-        Matrix key_inv = key.inverse2x2();
+        var res = new byte[b.size()];
+        for (int i = 0; i < b.size(); i++)
+            res[i] = b.get(i);
 
-
-        Matrix c = multiplyMatrix(m_res, key_inv);
-
-        c.print();
-
-        c.modulo(26);
-        c.print();
-        c.fixNegatives();
-        c.print();
-
+        return res;
     }
 }

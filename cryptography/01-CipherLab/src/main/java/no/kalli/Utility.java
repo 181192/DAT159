@@ -1,9 +1,14 @@
 package no.kalli;
 
 
+import java.nio.charset.StandardCharsets;
 import java.util.Vector;
 
-public class Utility2 {
+import static no.kalli.Matrix.createKeyMatrix;
+import static no.kalli.Matrix.createTuples;
+import static no.kalli.Matrix.multiplyMatrix;
+
+public class Utility {
 
     private static int a = 5;
     private static int b = 7;
@@ -61,13 +66,29 @@ public class Utility2 {
         return gcd(a, b - a);
     }
 
-    public static byte[] hillEncrypt(byte[] input) {
 
-        return null;
+    public static byte[] hillEncrypt(byte[] msg, byte[] key) {
+        var keyMatrix = createKeyMatrix(key);
+        var tuplets = createTuples(msg);
+
+        var m_res = multiplyMatrix(keyMatrix, tuplets);
+        m_res.modulo(m);
+
+        return m_res.toBytes();
     }
 
-    public static byte[] hillDecrypt(byte[] input) {
-        return null;
+    public static byte[] hillDencrypt(byte[] msg, byte[] key) {
+        var keyMatrix = createKeyMatrix(key);
+        var key_inv = keyMatrix.inverse2x2();
+        key_inv.modulo(m);
+
+        var m_res = createTuples(msg);
+
+        var c = multiplyMatrix(key_inv, m_res);
+        c.modulo(m);
+        c.fixNegatives();
+
+        return c.toBytes();
     }
 
 
@@ -80,6 +101,17 @@ public class Utility2 {
         System.out.println(new String(decrypted));
 
 
+        byte[] key = "PATH".getBytes();
+        byte[] msg = "CIPHER".getBytes();
+
+        // Encrypt
+        encrypted = hillEncrypt(msg, key);
+        System.out.println(new String(encrypted, StandardCharsets.UTF_8));
+
+
+        // Decrypt
+        decrypted = hillDencrypt(encrypted, key);
+        System.out.println(new String(decrypted, StandardCharsets.UTF_8));
 
     }
 }
