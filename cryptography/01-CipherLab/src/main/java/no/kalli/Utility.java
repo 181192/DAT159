@@ -9,28 +9,30 @@ import static no.kalli.Matrix.*;
 /**
  * @author Kristoffer-Andre Kalliainen
  */
+@CommandLine.Command(name = "CipherUltimate", footer = "Copyright(c) 2018",
+        description = "Encrypt and decrypt message with provided cipher algorithm as argument")
 public class Utility {
 
     private static final int m = 26;
 
-    @Option(names = {"-c", "--cipher"}, paramLabel = "affine|hill", description = "Select cipher type (affine or hill)")
-    private static String type = "";
+    @Option(names = {"-c", "--cipher"}, required = true, paramLabel = "affine|hill", description = "Select cipher type (affine or hill)")
+    private static String type;
 
     @Option(names = {"-a", "--keyA"}, paramLabel = "keyA", description = "Affine key A")
-    private static int a = 5;
+    private static int a;
 
     @Option(names = {"-b", "--keyB"}, paramLabel = "keyB", description = "Affine key B")
-    private static int b = 7;
+    private static int b;
 
     @Option(names = {"-k", "--keyHill"}, paramLabel = "KEY", description = "Hill key. A four letter key.")
-    private static String hill = "PATH";
+    public static String hill;
 
-    private static byte[] key = hill.getBytes();
+    public static byte[] key;
 
     @Option(names = {"-m", "--message"}, paramLabel = "MESSAGE", description = "Message to encrypt")
-    private static String message = "ILOVEPIZZA";
+    public static String message;
 
-    static byte[] msg = message.getBytes();
+    public static byte[] msg;
 
     @Option(names = {"-h", "--help"}, usageHelp = true, description = "display a help message")
     private boolean helpRequested = false;
@@ -183,28 +185,10 @@ public class Utility {
      * @param isServer Is it a client or server?
      */
     static void checkArguments(String[] args, boolean isServer) {
+        if (type.equals("hill"))
+            key = hill.getBytes();
 
-        type = args[0];
-
-        if (type.equals("affine")) {
-            if ((args[1].isEmpty() || args[2].isEmpty()))
-                throw new IllegalArgumentException("Argument 2 needs to be the A key, argument 3 needs to be the B key");
-            try {
-                a = Integer.parseInt(args[1]);
-                b = Integer.parseInt(args[2]);
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-            msg = args[3].getBytes();
-        } else if (!type.equals("hill")) {
-            if (args[1].isEmpty() || args[2].isEmpty() || args[1].length() == 4) {
-                throw new IllegalArgumentException("Argument 2 needs to be key with lenght 4");
-            }
-            key = args[1].getBytes();
-            msg = args[2].getBytes();
-        } else throw new IllegalArgumentException("Argument 1 needs to be either affine or hill");
-
-        if (!isServer && args[3].isEmpty())
-            throw new IllegalArgumentException("Argument 4 needs to be the message to encrypt");
+        if (!isServer)
+            msg = message.getBytes();
     }
 }

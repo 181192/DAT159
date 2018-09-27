@@ -32,6 +32,7 @@ public class Server implements IParent {
         }
 
         Utility.checkArguments(args, true);
+
         var server = new Server();
         // Wait for requests
         while (true) {
@@ -56,16 +57,15 @@ public class Server implements IParent {
 
             // Receive message from the client
             byte[] clientMsg = (byte[]) ois.readObject();
-            clientMsg = decryptMessage(clientMsg);
+            byte[] decrypted = decryptMessage(clientMsg);
 
             // Print the message in UTF-8 format
-            System.out.println("Message from Client: " + new String(clientMsg, StandardCharsets.UTF_8));
+            System.out.println("Message from Client: " + new String(decrypted, StandardCharsets.UTF_8));
 
-            byte[] response = "Message received from client".getBytes();
-            response = encryptMessage(response);
+            byte[] encrypted = encryptMessage(decrypted);
 
             // Send the plaintext response message to the client
-            oos.writeObject(response);
+            oos.writeObject(encrypted);
             oos.flush();
 
             // Close Client and Server sockets
