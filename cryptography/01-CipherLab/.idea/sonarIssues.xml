@@ -123,6 +123,26 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/../02-CipherLab/pom.xml">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../02-CipherLab/src/main/java/no/kalli/Client.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../02-CipherLab/src/main/java/no/kalli/Server.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../02-CipherLab/src/main/java/no/kalli/Utility.java">
+          <value>
+            <set />
+          </value>
+        </entry>
       </map>
     </option>
   </component>
