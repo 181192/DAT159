@@ -1,18 +1,9 @@
-/**
- * 
- */
 package no.kalli;
 
 /**
- * @author tosindo
- *
+ * @author Kristoffer-Andre Kalliainen
  */
 public interface IParent {
-	
-	int PORT = 9090;
-	
-	byte[] encryptMessage(byte[] plaintext);
-	
-	byte[] decryptMessage(byte[] ciphertext);
-	
+
+    int PORT = 9090;
 }

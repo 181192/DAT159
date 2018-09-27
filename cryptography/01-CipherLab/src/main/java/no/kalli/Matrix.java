@@ -8,38 +8,54 @@ public class Matrix {
     private int rows, cols;
 
 
+    /**
+     * A emtpy matrix
+     *
+     * @param rows Number of rows
+     * @param cols Number of col
+     */
     public Matrix(int rows, int cols) {
         data = new double[rows][cols];
         this.rows = rows;
         this.cols = cols;
     }
 
+    /**
+     * A matrix from a double array of type Double
+     *
+     * @param arr The array
+     */
     public Matrix(double[][] arr) {
         this.data = arr.clone();
         this.rows = arr.length;
         this.cols = arr[0].length;
     }
 
+    /**
+     * Check if a Matrix is squared
+     *
+     * @return True if the matrix is squared
+     */
     public boolean isSquare() {
         return rows == cols;
     }
 
-    public Matrix transpose() {
-        Matrix res = new Matrix(cols, rows);
-
-        for (int row = 0; row < rows; rows++)
-            for (int col = 0; col < cols; cols++)
-                res.data[col][row] = data[row][col];
-
-        return res;
-    }
-
+    /**
+     * Calculating the determinant of a 2x2 matrix
+     *
+     * @return The determinant
+     */
     public double determinant2x2() {
         return data[0][0] * data[1][1] - data[0][1] * data[1][0];
     }
 
+    /**
+     * Calculating the inverse of a 2x2 matrix
+     *
+     * @return The inverse matrix
+     */
     public Matrix inverse2x2() {
-        double[][] negatives = data.clone();
+        var negatives = data.clone();
         double tmp = data[0][0];
         double detA = 1 / determinant2x2();
 
@@ -50,12 +66,20 @@ public class Matrix {
         return new Matrix(negatives);
     }
 
+    /**
+     * Multiplying the matrix with modulo of the given param
+     *
+     * @param m The modulo
+     */
     public void modulo(int m) {
         for (int row = 0; row < data.length; row++)
             for (int col = 0; col < data[row].length; col++)
                 data[row][col] = data[row][col] % m;
     }
 
+    /**
+     * Printing out a presentation of the matrix
+     */
     public void print() {
         System.out.print("[");
         for (int row = 0; row < rows; ++row) {
@@ -75,6 +99,9 @@ public class Matrix {
 
     }
 
+    /**
+     * Fixing negatives values for letter representation
+     */
     public void fixNegatives() {
         for (int i = 0; i < data.length; i++)
             for (int j = 0; j < data[i].length; j++) {
@@ -83,10 +110,22 @@ public class Matrix {
             }
     }
 
+    /**
+     * Check if a array is even
+     *
+     * @param b The array
+     * @return True if the array is even
+     */
     private static boolean isEven(byte[] b) {
         return b.length % 2 == 0;
     }
 
+    /**
+     * Creating tuplets of the byte array
+     *
+     * @param b The array
+     * @return A 2xn matrix
+     */
     public static Matrix createTuples(byte[] b) {
         assert (isEven(b));
 
@@ -102,6 +141,12 @@ public class Matrix {
         return new Matrix(arr);
     }
 
+    /**
+     * Creating a 2x2 matrix of a given byte array with lenght 4
+     *
+     * @param b A byte array with length 4
+     * @return A 2x2 matrix
+     */
     public static Matrix createKeyMatrix(byte[] b) {
         if (b.length != 4) return null;
 
@@ -109,6 +154,13 @@ public class Matrix {
         return new Matrix(arr);
     }
 
+    /**
+     * Multiply a 2x2 matrix with an 2xn matrix
+     *
+     * @param a The 2x2 matrix
+     * @param b The 2xn matrix
+     * @return A 2xn matrix
+     */
     public static Matrix multiplyMatrix(Matrix a, Matrix b) {
         var rowa = a.data.length;
         var cola = a.data[0].length;
@@ -125,6 +177,9 @@ public class Matrix {
         return c;
     }
 
+    /**
+     * Print out the letters in the matrix
+     */
     public void printLetters() {
         for (double[] row : data)
             for (double col : row) System.out.print((char) (col + 'A' + 1));
@@ -132,16 +187,25 @@ public class Matrix {
         System.out.println();
     }
 
+    /**
+     * Create a string of the matrix
+     *
+     * @return String representation of the matrix
+     */
     public String toString() {
-        StringBuilder s = new StringBuilder();
+        var s = new StringBuilder();
         for (double[] row : data)
             for (double col : row) s.append((char) (col + 'A' + 1));
 
         return s.toString();
     }
 
+    /**
+     * Creating a one dimentional array of the matrix
+     *
+     * @return A one dimentional byte array of the matrix
+     */
     public byte[] toBytes() {
-
         var b = new ArrayList<Byte>();
 
         for (double[] row : data)

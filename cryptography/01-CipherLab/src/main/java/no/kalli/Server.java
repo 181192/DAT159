@@ -1,7 +1,6 @@
-/**
- * 
- */
 package no.kalli;
+
+import picocli.CommandLine;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -10,80 +9,74 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 
+import static no.kalli.Utility.decryptMessage;
+import static no.kalli.Utility.encryptMessage;
+
+
 /**
- * @author tosindo
- *
+ * @author Kristoffer-Andre Kalliainen
  */
 public class Server implements IParent {
-	/**
-	   * Main Method
-	   * 
-	   * @param args
-	   */
-	  public static void main(String args[])
-	  {
-		  var server = new Server();
-		  server.setup();
-		  // Wait for requests
-		  while (true) {
-			  server.receiveAndSend();
-		  }
-	  }
-	  
-	private void setup(){
-		
-	}
-	
-	private void receiveAndSend() {
-		ServerSocket server;
-	    Socket client;
-	    ObjectOutputStream oos;
-	    ObjectInputStream ois;
-	    
-	    try{
-	    	server = new ServerSocket(PORT);
-	    	System.out.println("Waiting for requests from client...");
-	    	client = server.accept();
-	    	System.out.println("Connected to client at the address: "+client.getInetAddress());
-	    	
-	    	oos = new ObjectOutputStream(client.getOutputStream());
-	        ois = new ObjectInputStream(client.getInputStream());
+    /**
+     * Main Method
+     *
+     * @param args
+     */
+    public static void main(String args[]) {
 
-	        // Receive message from the client
-	        byte[] clientMsg = (byte[]) ois.readObject();
-	        
-	        // Print the message in UTF-8 format
-	        System.out.println("Message from Client: "+ new String(clientMsg, StandardCharsets.UTF_8));
-	        
-	        // Create a response to client if message received
-	        String response = "No message received";
+        CommandLine commandLine = new CommandLine(new Utility());
+        commandLine.parse(args);
+        if (commandLine.isUsageHelpRequested()) {
+            commandLine.usage(System.out);
+            return;
+        }
 
-			response = "Message received from client";
+        Utility.checkArguments(args, true);
+        var server = new Server();
+        // Wait for requests
+        while (true) {
+            server.receiveAndSend();
+        }
+    }
 
-			// Send the plaintext response message to the client
-			oos.writeObject(response.getBytes());
-			oos.flush();
+    private void receiveAndSend() {
+        ServerSocket server;
+        Socket client;
+        ObjectOutputStream oos;
+        ObjectInputStream ois;
 
-			// Close Client and Server sockets
-	        client.close();
-	        server.close();
-	        oos.close();
-	        ois.close();
-	        
-	    }catch(IOException | ClassNotFoundException e){
-	    	e.printStackTrace();
-	    }
-		
-	}
+        try {
+            server = new ServerSocket(PORT);
+            System.out.println("Waiting for requests from client...");
+            client = server.accept();
+            System.out.println("Connected to client at the address: " + client.getInetAddress());
 
-	@Override
-	public byte[] encryptMessage(byte[] plaintext) {
-		return null;
-	}
+            oos = new ObjectOutputStream(client.getOutputStream());
+            ois = new ObjectInputStream(client.getInputStream());
 
-	@Override
-	public byte[] decryptMessage(byte[] ciphertext) {
-		return null;
-	}
+            // Receive message from the client
+            byte[] clientMsg = (byte[]) ois.readObject();
+            clientMsg = decryptMessage(clientMsg);
 
+            // Print the message in UTF-8 format
+            System.out.println("Message from Client: " + new String(clientMsg, StandardCharsets.UTF_8));
+
+            byte[] response = "Message received from client".getBytes();
+            response = encryptMessage(response);
+
+            // Send the plaintext response message to the client
+            oos.writeObject(response);
+            oos.flush();
+
+            // Close Client and Server sockets
+            client.close();
+            server.close();
+            oos.close();
+            ois.close();
+
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
+    }
 }

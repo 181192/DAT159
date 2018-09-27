@@ -1,19 +1,46 @@
 package no.kalli;
 
+import picocli.CommandLine;
+import picocli.CommandLine.Option;
 
-import java.nio.charset.StandardCharsets;
-import java.util.Vector;
+import static no.kalli.Matrix.*;
 
-import static no.kalli.Matrix.createKeyMatrix;
-import static no.kalli.Matrix.createTuples;
-import static no.kalli.Matrix.multiplyMatrix;
 
+/**
+ * @author Kristoffer-Andre Kalliainen
+ */
 public class Utility {
 
-    private static int a = 5;
-    private static int b = 7;
-    private static int m = 26;
+    private static final int m = 26;
 
+    @Option(names = {"-c", "--cipher"}, paramLabel = "affine|hill", description = "Select cipher type (affine or hill)")
+    private static String type = "";
+
+    @Option(names = {"-a", "--keyA"}, paramLabel = "keyA", description = "Affine key A")
+    private static int a = 5;
+
+    @Option(names = {"-b", "--keyB"}, paramLabel = "keyB", description = "Affine key B")
+    private static int b = 7;
+
+    @Option(names = {"-k", "--keyHill"}, paramLabel = "KEY", description = "Hill key. A four letter key.")
+    private static String hill = "PATH";
+
+    private static byte[] key = hill.getBytes();
+
+    @Option(names = {"-m", "--message"}, paramLabel = "MESSAGE", description = "Message to encrypt")
+    private static String message = "ILOVEPIZZA";
+
+    static byte[] msg = message.getBytes();
+
+    @Option(names = {"-h", "--help"}, usageHelp = true, description = "display a help message")
+    private boolean helpRequested = false;
+
+    /**
+     * Affine encrypt method
+     *
+     * @param input Byte array to be encrypted
+     * @return A affine encrypted byte array
+     */
     public static byte[] affineEncrypt(byte[] input) {
 
         byte[] tmp = new byte[input.length];
@@ -24,6 +51,12 @@ public class Utility {
         return tmp;
     }
 
+    /**
+     * Affine decrypt
+     *
+     * @param input Byte array to be decrypted
+     * @return A affine decrypted byte array
+     */
     public static byte[] affineDecrypt(byte[] input) {
 
         byte[] tmp = new byte[input.length];
@@ -34,16 +67,33 @@ public class Utility {
         return tmp;
     }
 
+    /**
+     * Helper method the encrypt one letter
+     *
+     * @param i The letter as byte format
+     * @return The encrypted letter as int
+     */
     private static int encryptThis(int i) {
         return ('A' + (a * (i + 'A') + b) % m);
     }
 
+    /**
+     * Helper method the decrypt one letter
+     *
+     * @param i The letter as byte format
+     * @return The decrypted letter as int
+     */
     private static int decryptThis(int i) {
-        int x = modInverse(a, m) * ((i - 'A') - b) % m;
+        int x = modInverse() * ((i - 'A') - b) % m;
         return x < 0 ? ((x + m) % m) + 'A' : x + 'A';
     }
 
-    private static int modInverse(int a, int m) {
+    /**
+     * Modulo inverse of the key a
+     *
+     * @return
+     */
+    private static int modInverse() {
         a = a % m;
         for (int x = 1; x < m; x++)
             if ((a * x) % m == 1)
@@ -51,25 +101,15 @@ public class Utility {
         return 1;
     }
 
-    public static int gcd(int a, int b) {
-        // Everything divides 0
-        if (a == 0 || b == 0)
-            return 0;
-
-        // base case
-        if (a == b)
-            return a;
-
-        // a is greater
-        if (a > b)
-            return gcd(a - b, b);
-        return gcd(a, b - a);
-    }
-
-
-    public static byte[] hillEncrypt(byte[] msg, byte[] key) {
+    /**
+     * Hill encrypt
+     *
+     * @param input Byte array to be encrypted
+     * @return Encrypted byte array
+     */
+    public static byte[] hillEncrypt(byte[] input) {
         var keyMatrix = createKeyMatrix(key);
-        var tuplets = createTuples(msg);
+        var tuplets = createTuples(input);
 
         var m_res = multiplyMatrix(keyMatrix, tuplets);
         m_res.modulo(m);
@@ -77,12 +117,18 @@ public class Utility {
         return m_res.toBytes();
     }
 
-    public static byte[] hillDencrypt(byte[] msg, byte[] key) {
+    /**
+     * Hill decrypt
+     *
+     * @param input Byte array to be encrypted
+     * @return Decrypted byte array
+     */
+    public static byte[] hillDecrypt(byte[] input) {
         var keyMatrix = createKeyMatrix(key);
         var key_inv = keyMatrix.inverse2x2();
         key_inv.modulo(m);
 
-        var m_res = createTuples(msg);
+        var m_res = createTuples(input);
 
         var c = multiplyMatrix(key_inv, m_res);
         c.modulo(m);
@@ -92,26 +138,73 @@ public class Utility {
     }
 
 
-    public static void main(String[] args) {
-        byte[] test = "ILOVEPIZZA".getBytes();
-        byte[] encrypted = affineEncrypt(test);
-        byte[] decrypted = affineDecrypt(encrypted);
+    /**
+     * Encrypt a message based on first commandline argument
+     *
+     * @param plaintext byte array to encrypt
+     * @return encrypted byte array
+     */
+    public static byte[] encryptMessage(byte[] plaintext) {
+        byte[] res = new byte[0];
+        switch (Utility.type) {
+            case "affine":
+                res = Utility.affineEncrypt(plaintext);
+                break;
+            case "hill":
+                res = Utility.hillEncrypt(plaintext);
+                break;
+        }
+        return res;
+    }
 
-        System.out.println(new String(encrypted));
-        System.out.println(new String(decrypted));
+    /**
+     * Decrypt a message based on first commandline argument 1
+     *
+     * @param ciphertext byte array to decrypt
+     * @return decrypted byte array
+     */
+    public static byte[] decryptMessage(byte[] ciphertext) {
+        byte[] res = new byte[0];
+        switch (Utility.type) {
+            case "affine":
+                res = Utility.affineDecrypt(ciphertext);
+                break;
+            case "hill":
+                res = Utility.hillDecrypt(ciphertext);
+                break;
+        }
+        return res;
+    }
 
+    /**
+     * Commandline arguments checker
+     *
+     * @param args     Commandline arguments
+     * @param isServer Is it a client or server?
+     */
+    static void checkArguments(String[] args, boolean isServer) {
 
-        byte[] key = "PATH".getBytes();
-        byte[] msg = "CIPHER".getBytes();
+        type = args[0];
 
-        // Encrypt
-        encrypted = hillEncrypt(msg, key);
-        System.out.println(new String(encrypted, StandardCharsets.UTF_8));
+        if (type.equals("affine")) {
+            if ((args[1].isEmpty() || args[2].isEmpty()))
+                throw new IllegalArgumentException("Argument 2 needs to be the A key, argument 3 needs to be the B key");
+            try {
+                a = Integer.parseInt(args[1]);
+                b = Integer.parseInt(args[2]);
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+            }
+            msg = args[3].getBytes();
+        } else if (!type.equals("hill")) {
+            if (args[1].isEmpty() || args[2].isEmpty() || args[1].length() == 4) {
+                throw new IllegalArgumentException("Argument 2 needs to be key with lenght 4");
+            }
+            key = args[1].getBytes();
+            msg = args[2].getBytes();
+        } else throw new IllegalArgumentException("Argument 1 needs to be either affine or hill");
 
-
-        // Decrypt
-        decrypted = hillDencrypt(encrypted, key);
-        System.out.println(new String(decrypted, StandardCharsets.UTF_8));
-
+        if (!isServer && args[3].isEmpty())
+            throw new IllegalArgumentException("Argument 4 needs to be the message to encrypt");
     }
 }
