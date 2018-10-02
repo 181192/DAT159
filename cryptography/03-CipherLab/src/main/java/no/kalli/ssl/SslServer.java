@@ -3,7 +3,6 @@ package no.kalli.ssl;
 import no.kalli.IParent;
 import picocli.CommandLine;
 
-import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLServerSocket;
 import javax.net.ssl.SSLServerSocketFactory;
@@ -13,7 +12,6 @@ import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
-import java.security.KeyStore;
 
 import static no.kalli.ssl.SslUtility.*;
 
@@ -100,16 +98,8 @@ public class SslServer implements IParent {
     private static SSLServerSocketFactory getSslServerSocketFactory() {
         SSLServerSocketFactory ssf = null;
         SSLContext ctx;
-        KeyManagerFactory kmf;
-        KeyStore ks;
         try {
-            ctx = SSLContext.getInstance("TLS");
-            kmf = KeyManagerFactory.getInstance("SunX509");
-            ks = KeyStore.getInstance("JKS");
-            ks.load(getKeyStore(), getPasswordAsCharArray());
-            kmf.init(ks, getPasswordAsCharArray());
-            ctx.init(kmf.getKeyManagers(), null, null);
-
+            ctx = getSslContext();
             ssf = ctx.getServerSocketFactory();
         } catch (Exception e) {
             e.printStackTrace();

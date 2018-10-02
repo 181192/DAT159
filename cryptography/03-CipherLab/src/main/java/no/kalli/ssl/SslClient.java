@@ -88,16 +88,8 @@ public class SslClient implements IParent {
     private static SSLSocketFactory getSslSocketFactory() {
         SSLSocketFactory factory = null;
         SSLContext ctx;
-        KeyManagerFactory kmf;
-        KeyStore ks;
         try {
-            ctx = SSLContext.getInstance("TLS");
-            kmf = KeyManagerFactory.getInstance("SunX509");
-            ks = KeyStore.getInstance("JKS");
-            ks.load(getKeyStore(), getPasswordAsCharArray());
-            kmf.init(ks, getPasswordAsCharArray());
-            ctx.init(kmf.getKeyManagers(), null, null);
-
+            ctx = getSslContext();
             factory = ctx.getSocketFactory();
         } catch (Exception e) {
             e.printStackTrace();

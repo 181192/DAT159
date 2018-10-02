@@ -2,7 +2,11 @@ package no.kalli.ssl;
 
 import picocli.CommandLine;
 
+import javax.net.ssl.KeyManagerFactory;
+import javax.net.ssl.SSLContext;
 import java.io.*;
+import java.security.*;
+import java.security.cert.CertificateException;
 import java.util.Objects;
 import java.util.Properties;
 
@@ -95,5 +99,22 @@ class SslUtility {
             }
         }
         return sb.toString();
+    }
+
+    static SSLContext getSslContext() {
+        SSLContext ctx = null;
+        KeyManagerFactory kmf;
+        KeyStore ks;
+        try {
+            ctx = SSLContext.getInstance("TLS");
+            kmf = KeyManagerFactory.getInstance("SunX509");
+            ks = KeyStore.getInstance("JKS");
+            ks.load(getKeyStore(), getPasswordAsCharArray());
+            kmf.init(ks, getPasswordAsCharArray());
+            ctx.init(kmf.getKeyManagers(), null, null);
+        } catch (NoSuchAlgorithmException | IOException | CertificateException | UnrecoverableKeyException | KeyStoreException | KeyManagementException e) {
+            e.printStackTrace();
+        }
+        return ctx;
     }
 }
