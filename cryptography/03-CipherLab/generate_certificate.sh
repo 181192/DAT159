@@ -10,8 +10,8 @@ if [ ! -d "$DIRECTORY" ]; then
     mkdir ${DIRECTORY}
 fi
 
-if [ -f "$PASSWORD_FILE" ]; then
-    rm ${PASSWORD_FILE}
+if [ -d "$DIRECTORY" ]; then
+    rm -rf ${DIRECTORY}/*
 fi
 
 echo ${PASSWORD} >> ${PASSWORD_FILE}
