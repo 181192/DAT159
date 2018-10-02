@@ -3,6 +3,7 @@ package no.kalli.ssl;
 import no.kalli.IParent;
 import picocli.CommandLine;
 
+import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLServerSocket;
 import javax.net.ssl.SSLServerSocketFactory;
@@ -12,6 +13,7 @@ import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
+import java.security.KeyStore;
 
 import static no.kalli.ssl.SslUtility.*;
 
@@ -78,7 +80,7 @@ public class SslServer implements IParent {
     }
 
     private static SSLServerSocket getSocket() {
-        setSystemProperties();
+        setServerSystemProperties();
         var ssf = getSslServerSocketFactory();
 
         return getSslServerSocket(ssf);
@@ -87,8 +89,7 @@ public class SslServer implements IParent {
     private static SSLServerSocket getSslServerSocket(SSLServerSocketFactory ssf) {
         SSLServerSocket sslServerSocket = null;
         try {
-            sslServerSocket =
-                    (SSLServerSocket) ssf.createServerSocket(SSL_PORT);
+            sslServerSocket = (SSLServerSocket) ssf.createServerSocket(SSL_PORT);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -96,15 +97,8 @@ public class SslServer implements IParent {
     }
 
     private static SSLServerSocketFactory getSslServerSocketFactory() {
-        SSLServerSocketFactory ssf = null;
-        SSLContext ctx;
-        try {
-            ctx = getSslContext();
-            ssf = ctx.getServerSocketFactory();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return ssf;
+        SSLContext ctx = getSslContext();
+        return ctx.getServerSocketFactory();
     }
 
 }

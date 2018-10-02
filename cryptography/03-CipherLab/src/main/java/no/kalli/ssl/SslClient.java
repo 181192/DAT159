@@ -12,7 +12,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
-import java.security.KeyStore;
+import java.security.*;
+import java.security.cert.CertificateException;
 
 import static no.kalli.ssl.SslUtility.*;
 
@@ -69,7 +70,7 @@ public class SslClient implements IParent {
     }
 
     private static SSLSocket getClientSSLSocket() {
-        setSystemProperties();
+        setClientSystemProperties();
         var factory = getSslSocketFactory();
 
         return getSslSocket(factory);
@@ -86,15 +87,7 @@ public class SslClient implements IParent {
     }
 
     private static SSLSocketFactory getSslSocketFactory() {
-        SSLSocketFactory factory = null;
-        SSLContext ctx;
-        try {
-            ctx = getSslContext();
-            factory = ctx.getSocketFactory();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return factory;
+        SSLContext ctx = getSslContext();
+        return ctx.getSocketFactory();
     }
-
 }
