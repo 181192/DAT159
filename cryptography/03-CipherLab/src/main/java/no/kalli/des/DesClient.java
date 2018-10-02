@@ -1,6 +1,7 @@
 package no.kalli.des;
 
 import no.kalli.IParent;
+import picocli.CommandLine;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -14,6 +15,13 @@ import java.nio.charset.StandardCharsets;
 public class DesClient implements IParent {
 
     public static void main(String[] args) {
+        CommandLine commandLine = new CommandLine(new DesUtility());
+        commandLine.parse(args);
+        if (commandLine.isUsageHelpRequested()) {
+            commandLine.usage(System.out);
+            return;
+        }
+
         DesUtility.configure(args);
 
         var client = new DesClient();

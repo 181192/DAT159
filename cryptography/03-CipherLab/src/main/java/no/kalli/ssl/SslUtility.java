@@ -20,13 +20,6 @@ class SslUtility {
      * @param args args
      */
     static void configure(String[] args) {
-        CommandLine commandLine = new CommandLine(new SslUtility());
-        commandLine.parse(args);
-        if (commandLine.isUsageHelpRequested()) {
-            commandLine.usage(System.out);
-            return;
-        }
-
         msg = message.getBytes();
     }
 }

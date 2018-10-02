@@ -1,6 +1,7 @@
 package no.kalli.ssl;
 
 import no.kalli.IParent;
+import picocli.CommandLine;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -20,6 +21,13 @@ public class SslServer implements IParent {
      * @param args
      */
     public static void main(String args[]) {
+        CommandLine commandLine = new CommandLine(new SslUtility());
+        commandLine.parse(args);
+        if (commandLine.isUsageHelpRequested()) {
+            commandLine.usage(System.out);
+            return;
+        }
+
         SslUtility.configure(args);
 
         var server = new SslServer();
