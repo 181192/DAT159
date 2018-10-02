@@ -15,7 +15,6 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyStore;
-import java.util.Properties;
 
 
 /**
@@ -80,7 +79,7 @@ public class SslServer implements IParent {
     }
 
     private static SSLServerSocket getSocket() {
-        setSystemProperties();
+        SslUtility.setSystemProperties();
         var ssf = getSslServerSocketFactory();
 
         return getSslServerSocket(ssf);
@@ -118,10 +117,4 @@ public class SslServer implements IParent {
         return ssf;
     }
 
-    private static void setSystemProperties() {
-        Properties systemProps = System.getProperties();
-        systemProps.put("javax.net.ssl.trustStore", CERTIFICATES + "cacerts.jks");
-        systemProps.put("javax.net.ssl.trustStorePassword", PASSWORD);
-        System.setProperties(systemProps);
-    }
 }

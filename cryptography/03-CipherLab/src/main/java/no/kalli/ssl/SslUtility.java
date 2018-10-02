@@ -1,6 +1,9 @@
 package no.kalli.ssl;
 
+import no.kalli.IParent;
 import picocli.CommandLine;
+
+import java.util.Properties;
 
 @CommandLine.Command(name = "SSL",
         description = "Send message with given argument")
@@ -21,5 +24,12 @@ class SslUtility {
      */
     static void configure(String[] args) {
         msg = message.getBytes();
+    }
+
+    static void setSystemProperties() {
+        Properties systemProps = System.getProperties();
+        systemProps.put("javax.net.ssl.trustStore", IParent.CERTIFICATES + "cacerts.jks");
+        systemProps.put("javax.net.ssl.trustStorePassword", IParent.PASSWORD);
+        System.setProperties(systemProps);
     }
 }

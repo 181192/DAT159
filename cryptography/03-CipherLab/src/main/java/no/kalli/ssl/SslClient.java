@@ -3,11 +3,18 @@ package no.kalli.ssl;
 import no.kalli.IParent;
 import picocli.CommandLine;
 
+import javax.net.ssl.KeyManagerFactory;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocket;
+import javax.net.ssl.SSLSocketFactory;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
+import java.security.KeyStore;
+import java.util.Properties;
 
 /**
  * @author Kristoffer-Andre Kalliainen
@@ -28,13 +35,50 @@ public class SslClient implements IParent {
         client.sendAndReceice();
     }
 
+    private static SSLSocket getClientSSLSocket() {
+        SSLSocketFactory factory = null;
+        SSLSocket socket = null;
+        SSLContext ctx;
+        KeyManagerFactory kmf;
+        KeyStore ks;
+
+        SslUtility.setSystemProperties();
+
+        char[] passphrase = PASSWORD.toCharArray();
+
+        try {
+            ctx = SSLContext.getInstance("TLS");
+            kmf = KeyManagerFactory.getInstance("SunX509");
+            ks = KeyStore.getInstance("JKS");
+
+            ks.load(new FileInputStream(CERTIFICATES + "keystore.jks"), passphrase);
+
+            kmf.init(ks, passphrase);
+            ctx.init(kmf.getKeyManagers(), null, null);
+
+            factory = ctx.getSocketFactory();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        try {
+            socket = (SSLSocket) factory.createSocket("localhost", SSL_PORT);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return socket;
+    }
+
+
+
     private void sendAndReceice() {
         Socket client;
         ObjectOutputStream oos;
         ObjectInputStream ois;
 
         try {
-            client = new Socket("localhost", PORT);
+            client = getClientSSLSocket();
 
             System.out.println("Connected to DesServer on " + client.getInetAddress());
 
