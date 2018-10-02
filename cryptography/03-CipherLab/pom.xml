@@ -10,6 +10,11 @@
 
 
     <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+            </resource>
+        </resources>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -129,7 +134,7 @@
                             <finalName>SslClient-1.0.0</finalName>
                             <archive>
                                 <manifest>
-                                    <mainClass>no.kalli.ssl.SslServer</mainClass>
+                                    <mainClass>no.kalli.ssl.SslClient</mainClass>
                                 </manifest>
                             </archive>
                         </configuration>
@@ -170,7 +175,5 @@
             <artifactId>picocli</artifactId>
             <version>3.6.0</version>
         </dependency>
-
-
     </dependencies>
 </project>
