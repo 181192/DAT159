@@ -1,12 +1,13 @@
-package no.kalli;
+package no.kalli.basic;
 
-import picocli.CommandLine;
+import no.kalli.IParent;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 
 
 /**
@@ -19,13 +20,7 @@ public class Server implements IParent {
      * @param args
      */
     public static void main(String args[]) {
-
-        CommandLine commandLine = new CommandLine(new Utility());
-        commandLine.parse(args);
-        if (commandLine.isUsageHelpRequested()) {
-            commandLine.usage(System.out);
-            return;
-        }
+        BasicUtility.configure(args);
 
         var server = new Server();
         // Wait for requests
@@ -51,18 +46,15 @@ public class Server implements IParent {
 
             // Receive message from the client
             byte[] clientMsg = (byte[]) ois.readObject();
-            //byte[] decrypted = decryptMessage(clientMsg);
 
             // Print the message in UTF-8 format
-            //System.out.println("Message from Client: " + new String(decrypted, StandardCharsets.UTF_8));
-
-            //byte[] encrypted = encryptMessage(decrypted);
+            System.out.println("Message from DesClient: " + new String(clientMsg, StandardCharsets.UTF_8));
 
             // Send the plaintext response message to the client
-            //oos.writeObject(encrypted);
+            oos.writeObject(clientMsg);
             oos.flush();
 
-            // Close Client and Server sockets
+            // Close DesClient and DesServer sockets
             client.close();
             server.close();
             oos.close();

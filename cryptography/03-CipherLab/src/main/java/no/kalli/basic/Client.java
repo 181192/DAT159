@@ -1,6 +1,6 @@
-package no.kalli;
+package no.kalli.basic;
 
-import picocli.CommandLine;
+import no.kalli.IParent;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -13,15 +13,8 @@ import java.nio.charset.StandardCharsets;
  */
 public class Client implements IParent {
 
-
     public static void main(String[] args) {
-
-        CommandLine commandLine = new CommandLine(new Utility());
-        commandLine.parse(args);
-        if (commandLine.isUsageHelpRequested()) {
-            commandLine.usage(System.out);
-            return;
-        }
+        BasicUtility.configure(args);
 
         var client = new Client();
         client.sendAndReceice();
@@ -35,18 +28,17 @@ public class Client implements IParent {
         try {
             client = new Socket("localhost", PORT);
 
-            System.out.println("Connected to Server on " + client.getInetAddress());
+            System.out.println("Connected to DesServer on " + client.getInetAddress());
 
             oos = new ObjectOutputStream(client.getOutputStream());
             ois = new ObjectInputStream(client.getInputStream());
 
             // send message to server
-//            oos.writeObject(encryptMessage(Utility.msg));
+            oos.writeObject(BasicUtility.msg);
             oos.flush();
 
             // receive response from server
             byte[] response = (byte[]) ois.readObject();
-//            response = decryptMessage(response);
 
             System.out.println("Response from server: " + new String(response, StandardCharsets.UTF_8));
 
