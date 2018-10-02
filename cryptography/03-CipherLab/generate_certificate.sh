@@ -1,13 +1,20 @@
 #!/usr/bin/env bash
 
-DIRECTORY=certificates
+DIRECTORY="src/main/resources"
+PASSWORD_FILE="$DIRECTORY/password.txt"
 
 read -p "Enter your certificate password : " PASSWORD
 echo "The password is: $PASSWORD"
 
 if [ ! -d "$DIRECTORY" ]; then
-  mkdir ${DIRECTORY}
+    mkdir ${DIRECTORY}
 fi
+
+if [ -f "$PASSWORD_FILE" ]; then
+    rm ${PASSWORD_FILE}
+fi
+
+echo ${PASSWORD} >> ${PASSWORD_FILE}
 
 # generate the certificates
 keytool -genkey -alias server-alias -keyalg RSA -keypass ${PASSWORD} -storepass ${PASSWORD} -keystore ${DIRECTORY}/keystore.jks
