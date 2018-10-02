@@ -3,7 +3,6 @@ package no.kalli.ssl;
 import no.kalli.IParent;
 import picocli.CommandLine;
 
-import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLServerSocket;
 import javax.net.ssl.SSLServerSocketFactory;
@@ -13,9 +12,9 @@ import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
-import java.security.KeyStore;
 
-import static no.kalli.ssl.SslUtility.*;
+import static no.kalli.ssl.SslUtility.getSslContext;
+import static no.kalli.ssl.SslUtility.setServerSystemProperties;
 
 
 /**
@@ -79,6 +78,10 @@ public class SslServer implements IParent {
 
     }
 
+    /**
+     * Get the SSL server socket
+     * @return
+     */
     private static SSLServerSocket getSocket() {
         setServerSystemProperties();
         var ssf = getSslServerSocketFactory();
@@ -86,6 +89,11 @@ public class SslServer implements IParent {
         return getSslServerSocket(ssf);
     }
 
+    /**
+     * Helper method to get the SSL socket
+     * @param ssf
+     * @return
+     */
     private static SSLServerSocket getSslServerSocket(SSLServerSocketFactory ssf) {
         SSLServerSocket sslServerSocket = null;
         try {
@@ -96,6 +104,10 @@ public class SslServer implements IParent {
         return sslServerSocket;
     }
 
+    /**
+     * Get the SSL Server Socket Factory
+     * @return
+     */
     private static SSLServerSocketFactory getSslServerSocketFactory() {
         SSLContext ctx = getSslContext();
         return ctx.getServerSocketFactory();

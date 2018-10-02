@@ -4,9 +4,16 @@ import picocli.CommandLine;
 
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
-import java.io.*;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.URL;
 import java.security.*;
 import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 import java.util.Properties;
 
 @CommandLine.Command(name = "SSL",
@@ -30,6 +37,9 @@ class SslUtility {
         msg = message.getBytes();
     }
 
+    /**
+     * Set the server system properties
+     */
     static void setServerSystemProperties() {
         Properties systemProps = System.getProperties();
         systemProps.put("javax.net.ssl.keyStore", getCaCert());
@@ -37,6 +47,9 @@ class SslUtility {
         System.setProperties(systemProps);
     }
 
+    /**
+     * Set the client system properties
+     */
     static void setClientSystemProperties() {
         Properties systemProps = System.getProperties();
         systemProps.put("javax.net.ssl.trustStore", getCaCert());
@@ -44,26 +57,52 @@ class SslUtility {
         System.setProperties(systemProps);
     }
 
+    /**
+     * Get the password from the resource file password.txt
+     * @return
+     */
     private static String getPassword() {
         return getStringFromInputStream(getFile("password.txt"));
     }
 
-    static char[] getPasswordAsCharArray() {
+    /**
+     * Get the password as a char array
+     * @return
+     */
+    private static char[] getPasswordAsCharArray() {
         return getPassword().toCharArray();
     }
 
-    private static String getCaCert() {
-        return getStringFromInputStream(getFile("cacerts.jks"));
+    /**
+     * Get the url of the cacerts
+     * @return
+     */
+    private static URL getCaCert() {
+        return SslClient.class.getClassLoader().getResource("cacerts.jks");
     }
 
-    static InputStream getKeyStore() {
+    /**
+     * Get the keystore
+     * @return
+     */
+    private static InputStream getKeyStore() {
         return getFile("keystore.jks");
     }
 
+    /**
+     * Get a resource file
+     * @param filename filename
+     * @return Inputstream from the file
+     */
     private static InputStream getFile(String filename) {
-        return SslUtility.class.getClassLoader().getResourceAsStream( filename);
+        return SslUtility.class.getClassLoader().getResourceAsStream(filename);
     }
 
+    /**
+     * Create a string from input stream
+     * @param is
+     * @return
+     */
     private static String getStringFromInputStream(InputStream is) {
         BufferedReader br = null;
         StringBuilder sb = new StringBuilder();
@@ -87,6 +126,10 @@ class SslUtility {
         return sb.toString();
     }
 
+    /**
+     * Get the SSL Context
+     * @return SSL Context
+     */
     static SSLContext getSslContext() {
         SSLContext ctx = null;
         KeyManagerFactory kmf;
@@ -97,10 +140,26 @@ class SslUtility {
             ks = KeyStore.getInstance("JKS");
             ks.load(getKeyStore(), getPasswordAsCharArray());
             kmf.init(ks, getPasswordAsCharArray());
-            ctx.init(kmf.getKeyManagers(), null, null);
+            ctx.init(kmf.getKeyManagers(), dummyTrustManager, null);
         } catch (NoSuchAlgorithmException | IOException | CertificateException | KeyStoreException | UnrecoverableKeyException | KeyManagementException e) {
             e.printStackTrace();
         }
         return ctx;
     }
+
+    /**
+     * Getting tired of Java TrustStore made a dummy to accept everything
+     */
+    static TrustManager[] dummyTrustManager = new TrustManager[]{new X509TrustManager() {
+        public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+            return null;
+        }
+
+        public void checkClientTrusted(X509Certificate[] certs, String authType) {
+        }
+
+        public void checkServerTrusted(X509Certificate[] certs, String authType) {
+        }
+    }};
+
 }

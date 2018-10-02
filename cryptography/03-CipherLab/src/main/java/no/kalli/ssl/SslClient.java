@@ -3,7 +3,6 @@ package no.kalli.ssl;
 import no.kalli.IParent;
 import picocli.CommandLine;
 
-import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
@@ -12,8 +11,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
-import java.security.*;
-import java.security.cert.CertificateException;
 
 import static no.kalli.ssl.SslUtility.*;
 
@@ -42,7 +39,7 @@ public class SslClient implements IParent {
         ObjectInputStream ois;
 
         try {
-            client = getClientSSLSocket();
+            client = getSocket();
 
             System.out.println("Connected to DesServer on " + client.getInetAddress());
 
@@ -69,13 +66,23 @@ public class SslClient implements IParent {
 
     }
 
-    private static SSLSocket getClientSSLSocket() {
+
+    /**
+     * Get the SSL Socket
+     * @return
+     */
+    private static SSLSocket getSocket() {
         setClientSystemProperties();
         var factory = getSslSocketFactory();
 
         return getSslSocket(factory);
     }
 
+    /**
+     * Helper method to get the SSL Socket
+     * @param factory
+     * @return
+     */
     private static SSLSocket getSslSocket(SSLSocketFactory factory) {
         SSLSocket socket = null;
         try {
@@ -86,6 +93,10 @@ public class SslClient implements IParent {
         return socket;
     }
 
+    /**
+     * Get the SSL Socket Factory
+     * @return
+     */
     private static SSLSocketFactory getSslSocketFactory() {
         SSLContext ctx = getSslContext();
         return ctx.getSocketFactory();

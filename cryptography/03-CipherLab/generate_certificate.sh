@@ -3,8 +3,9 @@
 DIRECTORY="src/main/resources"
 PASSWORD_FILE="$DIRECTORY/password.txt"
 
-read -p "Enter your certificate password : " PASSWORD
-echo "The password is: $PASSWORD"
+#read -p "Enter your certificate password : " PASSWORD
+#echo "The password is: $PASSWORD"
+PASSWORD=changeit
 
 if [ ! -d "$DIRECTORY" ]; then
     mkdir ${DIRECTORY}
