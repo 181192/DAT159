@@ -35,43 +35,6 @@ public class SslClient implements IParent {
         client.sendAndReceice();
     }
 
-    private static SSLSocket getClientSSLSocket() {
-        SSLSocketFactory factory = null;
-        SSLSocket socket = null;
-        SSLContext ctx;
-        KeyManagerFactory kmf;
-        KeyStore ks;
-
-        SslUtility.setSystemProperties();
-
-        char[] passphrase = PASSWORD.toCharArray();
-
-        try {
-            ctx = SSLContext.getInstance("TLS");
-            kmf = KeyManagerFactory.getInstance("SunX509");
-            ks = KeyStore.getInstance("JKS");
-
-            ks.load(new FileInputStream(CERTIFICATES + "keystore.jks"), passphrase);
-
-            kmf.init(ks, passphrase);
-            ctx.init(kmf.getKeyManagers(), null, null);
-
-            factory = ctx.getSocketFactory();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        try {
-            socket = (SSLSocket) factory.createSocket("localhost", SSL_PORT);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return socket;
-    }
-
-
-
     private void sendAndReceice() {
         Socket client;
         ObjectOutputStream oos;
@@ -104,4 +67,46 @@ public class SslClient implements IParent {
         }
 
     }
+
+    private static SSLSocket getClientSSLSocket() {
+        SslUtility.setSystemProperties();
+        var factory = getSslSocketFactory();
+
+        return getSslSocket(factory);
+    }
+
+    private static SSLSocket getSslSocket(SSLSocketFactory factory) {
+        SSLSocket socket = null;
+        try {
+            socket = (SSLSocket) factory.createSocket("localhost", SSL_PORT);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return socket;
+    }
+
+    private static SSLSocketFactory getSslSocketFactory() {
+        SSLSocketFactory factory = null;
+        SSLContext ctx;
+        KeyManagerFactory kmf;
+        KeyStore ks;
+        char[] passphrase = PASSWORD.toCharArray();
+
+        try {
+            ctx = SSLContext.getInstance("TLS");
+            kmf = KeyManagerFactory.getInstance("SunX509");
+            ks = KeyStore.getInstance("JKS");
+
+            ks.load(new FileInputStream(CERTIFICATES + "keystore.jks"), passphrase);
+
+            kmf.init(ks, passphrase);
+            ctx.init(kmf.getKeyManagers(), null, null);
+
+            factory = ctx.getSocketFactory();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return factory;
+    }
+
 }
