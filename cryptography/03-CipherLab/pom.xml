@@ -39,9 +39,9 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <executions>
-                    <!-- The Client -->
+                    <!-- Basic DesClient -->
                     <execution>
-                        <id>Client</id>
+                        <id>BasicClient</id>
                         <goals>
                             <goal>attached</goal>
                         </goals>
@@ -50,17 +50,17 @@
                             <descriptorRefs>
                                 <descriptorRef>jar-with-dependencies</descriptorRef>
                             </descriptorRefs>
-                            <finalName>Client-1.0.0</finalName>
+                            <finalName>BasicClient-1.0.0</finalName>
                             <archive>
                                 <manifest>
-                                    <mainClass>no.kalli.Client</mainClass>
+                                    <mainClass>no.kalli.basic.Client</mainClass>
                                 </manifest>
                             </archive>
                         </configuration>
                     </execution>
-                    <!-- The server -->
+                    <!-- Basic server -->
                     <execution>
-                        <id>Server</id>
+                        <id>BasicServer</id>
                         <goals>
                             <goal>attached</goal>
                         </goals>
@@ -69,10 +69,86 @@
                             <descriptorRefs>
                                 <descriptorRef>jar-with-dependencies</descriptorRef>
                             </descriptorRefs>
-                            <finalName>Server-1.0.0</finalName>
+                            <finalName>BasicServer-1.0.0</finalName>
                             <archive>
                                 <manifest>
-                                    <mainClass>no.kalli.Server</mainClass>
+                                    <mainClass>no.kalli.basic.Server</mainClass>
+                                </manifest>
+                            </archive>
+                        </configuration>
+                    </execution>
+                    <!-- DES Client -->
+                    <execution>
+                        <id>DesClient</id>
+                        <goals>
+                            <goal>attached</goal>
+                        </goals>
+                        <phase>package</phase>
+                        <configuration>
+                            <descriptorRefs>
+                                <descriptorRef>jar-with-dependencies</descriptorRef>
+                            </descriptorRefs>
+                            <finalName>DesClient-1.0.0</finalName>
+                            <archive>
+                                <manifest>
+                                    <mainClass>no.kalli.des.DesClient</mainClass>
+                                </manifest>
+                            </archive>
+                        </configuration>
+                    </execution>
+                    <!-- DES server -->
+                    <execution>
+                        <id>DesServer</id>
+                        <goals>
+                            <goal>attached</goal>
+                        </goals>
+                        <phase>package</phase>
+                        <configuration>
+                            <descriptorRefs>
+                                <descriptorRef>jar-with-dependencies</descriptorRef>
+                            </descriptorRefs>
+                            <finalName>DesServer-1.0.0</finalName>
+                            <archive>
+                                <manifest>
+                                    <mainClass>no.kalli.des.DesServer</mainClass>
+                                </manifest>
+                            </archive>
+                        </configuration>
+                    </execution>
+                    <!-- SSL Client -->
+                    <execution>
+                        <id>SslClient</id>
+                        <goals>
+                            <goal>attached</goal>
+                        </goals>
+                        <phase>package</phase>
+                        <configuration>
+                            <descriptorRefs>
+                                <descriptorRef>jar-with-dependencies</descriptorRef>
+                            </descriptorRefs>
+                            <finalName>SslClient-1.0.0</finalName>
+                            <archive>
+                                <manifest>
+                                    <mainClass>no.kalli.ssl.SslServer</mainClass>
+                                </manifest>
+                            </archive>
+                        </configuration>
+                    </execution>
+                    <!-- SSL server -->
+                    <execution>
+                        <id>SslServer</id>
+                        <goals>
+                            <goal>attached</goal>
+                        </goals>
+                        <phase>package</phase>
+                        <configuration>
+                            <descriptorRefs>
+                                <descriptorRef>jar-with-dependencies</descriptorRef>
+                            </descriptorRefs>
+                            <finalName>SslServer-1.0.0</finalName>
+                            <archive>
+                                <manifest>
+                                    <mainClass>no.kalli.ssl.SslServer</mainClass>
                                 </manifest>
                             </archive>
                         </configuration>
