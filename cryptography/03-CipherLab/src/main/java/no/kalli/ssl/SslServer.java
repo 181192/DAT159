@@ -3,38 +3,43 @@ package no.kalli.ssl;
 import no.kalli.IParent;
 import picocli.CommandLine;
 
+import javax.net.ssl.KeyManagerFactory;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLServerSocket;
+import javax.net.ssl.SSLServerSocketFactory;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
+import java.security.KeyStore;
+import java.util.Properties;
 
 
 /**
  * @author Kristoffer-Andre Kalliainen
  */
 public class SslServer implements IParent {
+
     /**
      * Main Method
      *
      * @param args
      */
     public static void main(String args[]) {
-        CommandLine commandLine = new CommandLine(new SslUtility());
+        var commandLine = new CommandLine(new SslUtility());
         commandLine.parse(args);
         if (commandLine.isUsageHelpRequested()) {
             commandLine.usage(System.out);
             return;
         }
 
-        SslUtility.configure(args);
-
         var server = new SslServer();
+
         // Wait for requests
-        while (true) {
-            server.receiveAndSend();
-        }
+        while (true) server.receiveAndSend();
     }
 
     private void receiveAndSend() {
@@ -44,7 +49,7 @@ public class SslServer implements IParent {
         ObjectInputStream ois;
 
         try {
-            server = new ServerSocket(PORT);
+            server = getSocket();
             System.out.println("Waiting for requests from client...");
             client = server.accept();
             System.out.println("Connected to client at the address: " + client.getInetAddress());
@@ -72,5 +77,51 @@ public class SslServer implements IParent {
             e.printStackTrace();
         }
 
+    }
+
+    private static SSLServerSocket getSocket() {
+        setSystemProperties();
+        var ssf = getSslServerSocketFactory();
+
+        return getSslServerSocket(ssf);
+    }
+
+    private static SSLServerSocket getSslServerSocket(SSLServerSocketFactory ssf) {
+        SSLServerSocket sslServerSocket = null;
+        try {
+            sslServerSocket =
+                    (SSLServerSocket) ssf.createServerSocket(SSL_PORT);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return sslServerSocket;
+    }
+
+    private static SSLServerSocketFactory getSslServerSocketFactory() {
+        SSLServerSocketFactory ssf = null;
+        char[] passphrase = PASSWORD.toCharArray();
+        SSLContext ctx;
+        KeyManagerFactory kmf;
+        KeyStore ks;
+        try {
+            ctx = SSLContext.getInstance("TLS");
+            kmf = KeyManagerFactory.getInstance("SunX509");
+            ks = KeyStore.getInstance("JKS");
+            ks.load(new FileInputStream(CERTIFICATES + "keystore.jks"), passphrase);
+            kmf.init(ks, passphrase);
+            ctx.init(kmf.getKeyManagers(), null, null);
+
+            ssf = ctx.getServerSocketFactory();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return ssf;
+    }
+
+    private static void setSystemProperties() {
+        Properties systemProps = System.getProperties();
+        systemProps.put("javax.net.ssl.trustStore", CERTIFICATES + "cacerts.jks");
+        systemProps.put("javax.net.ssl.trustStorePassword", PASSWORD);
+        System.setProperties(systemProps);
     }
 }
