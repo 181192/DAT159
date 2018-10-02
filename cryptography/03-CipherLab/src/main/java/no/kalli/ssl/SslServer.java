@@ -7,7 +7,6 @@ import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLServerSocket;
 import javax.net.ssl.SSLServerSocketFactory;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -15,6 +14,8 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyStore;
+
+import static no.kalli.ssl.SslUtility.*;
 
 
 /**
@@ -79,7 +80,7 @@ public class SslServer implements IParent {
     }
 
     private static SSLServerSocket getSocket() {
-        SslUtility.setSystemProperties();
+        setSystemProperties();
         var ssf = getSslServerSocketFactory();
 
         return getSslServerSocket(ssf);
@@ -98,7 +99,6 @@ public class SslServer implements IParent {
 
     private static SSLServerSocketFactory getSslServerSocketFactory() {
         SSLServerSocketFactory ssf = null;
-        char[] passphrase = PASSWORD.toCharArray();
         SSLContext ctx;
         KeyManagerFactory kmf;
         KeyStore ks;
@@ -106,8 +106,8 @@ public class SslServer implements IParent {
             ctx = SSLContext.getInstance("TLS");
             kmf = KeyManagerFactory.getInstance("SunX509");
             ks = KeyStore.getInstance("JKS");
-            ks.load(new FileInputStream(CERTIFICATES + "keystore.jks"), passphrase);
-            kmf.init(ks, passphrase);
+            ks.load(getKeyStore(), getPasswordAsCharArray());
+            kmf.init(ks, getPasswordAsCharArray());
             ctx.init(kmf.getKeyManagers(), null, null);
 
             ssf = ctx.getServerSocketFactory();

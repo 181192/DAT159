@@ -1,15 +1,16 @@
 package no.kalli.ssl;
 
-import no.kalli.IParent;
 import picocli.CommandLine;
 
+import java.io.*;
+import java.util.Objects;
 import java.util.Properties;
 
 @CommandLine.Command(name = "SSL",
-        description = "Send message with given argument")
+        description = "Send message with given argument over SSL/TLS")
 class SslUtility {
 
-    @CommandLine.Option(names = {"-m", "--message"}, paramLabel = "MESSAGE", description = "Message to encrypt")
+    @CommandLine.Option(names = {"-m", "--message"}, paramLabel = "MESSAGE", description = "Message to send securely")
     private static String message;
     static byte[] msg;
 
@@ -28,8 +29,71 @@ class SslUtility {
 
     static void setSystemProperties() {
         Properties systemProps = System.getProperties();
-        systemProps.put("javax.net.ssl.trustStore", IParent.CERTIFICATES + "cacerts.jks");
-        systemProps.put("javax.net.ssl.trustStorePassword", IParent.PASSWORD);
+        systemProps.put("javax.net.ssl.trustStore", getCaCert());
+        systemProps.put("javax.net.ssl.trustStorePassword", getPassword());
         System.setProperties(systemProps);
+    }
+
+    private static String getPassword() {
+        String password = null;
+        try {
+            password = getStringFromInputStream(getFile("password.txt"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return password;
+    }
+
+    static char[] getPasswordAsCharArray() {
+        return getPassword().toCharArray();
+    }
+
+    private static String getCaCert() {
+        String cacert = null;
+        try {
+            cacert = getStringFromInputStream(getFile("cacerts.jks"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return cacert;
+    }
+
+    static FileInputStream getKeyStore() {
+        FileInputStream fi = null;
+        try {
+            fi = getFile("keystore.jks");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return fi;
+    }
+
+    private static FileInputStream getFile(String filename) throws IOException {
+        ClassLoader classLoader = SslUtility.class.getClassLoader();
+        File file = new File(Objects.requireNonNull(classLoader.getResource(filename)).getFile());
+        return new FileInputStream(file);
+    }
+
+    private static String getStringFromInputStream(InputStream is) {
+        BufferedReader br = null;
+        StringBuilder sb = new StringBuilder();
+        String line;
+
+        try {
+            br = new BufferedReader(new InputStreamReader(is));
+            while ((line = br.readLine()) != null) sb.append(line);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (br != null) {
+                try {
+                    br.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return sb.toString();
     }
 }

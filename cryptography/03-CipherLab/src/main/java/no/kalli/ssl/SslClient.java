@@ -7,14 +7,14 @@ import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyStore;
-import java.util.Properties;
+
+import static no.kalli.ssl.SslUtility.*;
 
 /**
  * @author Kristoffer-Andre Kalliainen
@@ -22,14 +22,14 @@ import java.util.Properties;
 public class SslClient implements IParent {
 
     public static void main(String[] args) {
-        CommandLine commandLine = new CommandLine(new SslUtility());
+        var commandLine = new CommandLine(new SslUtility());
         commandLine.parse(args);
         if (commandLine.isUsageHelpRequested()) {
             commandLine.usage(System.out);
             return;
         }
 
-        SslUtility.configure(args);
+        configure(args);
 
         var client = new SslClient();
         client.sendAndReceice();
@@ -49,7 +49,7 @@ public class SslClient implements IParent {
             ois = new ObjectInputStream(client.getInputStream());
 
             // send message to server
-            oos.writeObject(SslUtility.msg);
+            oos.writeObject(msg);
             oos.flush();
 
             // receive response from server
@@ -69,7 +69,7 @@ public class SslClient implements IParent {
     }
 
     private static SSLSocket getClientSSLSocket() {
-        SslUtility.setSystemProperties();
+        setSystemProperties();
         var factory = getSslSocketFactory();
 
         return getSslSocket(factory);
@@ -90,16 +90,12 @@ public class SslClient implements IParent {
         SSLContext ctx;
         KeyManagerFactory kmf;
         KeyStore ks;
-        char[] passphrase = PASSWORD.toCharArray();
-
         try {
             ctx = SSLContext.getInstance("TLS");
             kmf = KeyManagerFactory.getInstance("SunX509");
             ks = KeyStore.getInstance("JKS");
-
-            ks.load(new FileInputStream(CERTIFICATES + "keystore.jks"), passphrase);
-
-            kmf.init(ks, passphrase);
+            ks.load(getKeyStore(), getPasswordAsCharArray());
+            kmf.init(ks, getPasswordAsCharArray());
             ctx.init(kmf.getKeyManagers(), null, null);
 
             factory = ctx.getSocketFactory();
