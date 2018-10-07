@@ -13,7 +13,6 @@ Send message with given argument
   -m, --message=MESSAGE   Message to encrypt
 ```
 
-
 ## Part 01 - Basic
 This is just the standard CipherLab.zip.
 
@@ -55,6 +54,122 @@ Response from server: ThisIsACoolTest
 
 ## Part 03 - SSL and CA
 This is a SSL implementation with Certificate Authority using Java TrustStore and KeyStore.
+
+
+### Generating Certificates
+
+> Generate Certificates in TrustStore and KeyStore by running
+
+```
+$ ./generate_certificate.sh
+
+What is your first and last name?
+  [Unknown]:  Kristoffer-Andre Kalliainen
+What is the name of your organizational unit?
+  [Unknown]:  
+What is the name of your organization?
+  [Unknown]:  HVL
+What is the name of your City or Locality?
+  [Unknown]:  Bergen
+What is the name of your State or Province?
+  [Unknown]:  Hordaland
+What is the two-letter country code for this unit?
+  [Unknown]:  NO
+Is CN=Kristoffer-Andre Kalliainen, OU=Unknown, O=HVL, L=Bergen, ST=Hordaland, C=NO correct?
+  [no]:  yes
+
+Certificate stored in file <src/main/resources/server.cer>
+
+Owner: CN=Kristoffer-Andre Kalliainen, OU=Unknown, O=HVL, L=Bergen, ST=Hordaland, C=NO
+Issuer: CN=Kristoffer-Andre Kalliainen, OU=Unknown, O=HVL, L=Bergen, ST=Hordaland, C=NO
+Serial number: 36642341
+Valid from: Mon Oct 08 00:01:42 CEST 2018 until: Sat Jan 05 23:01:42 CET 2019
+Certificate fingerprints:
+         MD5:  A4:14:45:57:D3:04:7F:20:A0:F3:F5:72:7C:0B:BC:65
+         SHA1: 52:94:E7:A1:03:22:45:85:8D:69:A0:D6:82:2A:1F:7F:16:0A:4C:3C
+         SHA256: 4C:BC:41:4D:F1:01:60:30:32:CD:CD:0D:A5:7A:F3:5D:F4:3C:37:04:B6:66:7E:F3:EE:AA:C1:AC:4A:1B:B5:C7
+Signature algorithm name: SHA256withRSA
+Subject Public Key Algorithm: 2048-bit RSA key
+Version: 3
+
+Extensions: 
+
+#1: ObjectId: 2.5.29.14 Criticality=false
+SubjectKeyIdentifier [
+KeyIdentifier [
+0000: 72 7A 15 6E 89 42 38 3E   2F DD 20 C9 69 20 6F 9B  rz.n.B8>/. .i o.
+0010: 66 6E 40 35                                        fn@5
+]
+]
+
+Trust this certificate? [no]:  yes
+Certificate was added to keystore
+[Storing src/main/resources/cacerts.jceks]
+Keystore type: JCEKS
+Keystore provider: SunJCE
+
+Your keystore contains 1 entry
+
+Alias name: server-alias
+Creation date: Oct 8, 2018
+Entry type: PrivateKeyEntry
+Certificate chain length: 1
+Certificate[1]:
+Owner: CN=Kristoffer-Andre Kalliainen, OU=Unknown, O=HVL, L=Bergen, ST=Hordaland, C=NO
+Issuer: CN=Kristoffer-Andre Kalliainen, OU=Unknown, O=HVL, L=Bergen, ST=Hordaland, C=NO
+Serial number: 36642341
+Valid from: Mon Oct 08 00:01:42 CEST 2018 until: Sat Jan 05 23:01:42 CET 2019
+Certificate fingerprints:
+         MD5:  A4:14:45:57:D3:04:7F:20:A0:F3:F5:72:7C:0B:BC:65
+         SHA1: 52:94:E7:A1:03:22:45:85:8D:69:A0:D6:82:2A:1F:7F:16:0A:4C:3C
+         SHA256: 4C:BC:41:4D:F1:01:60:30:32:CD:CD:0D:A5:7A:F3:5D:F4:3C:37:04:B6:66:7E:F3:EE:AA:C1:AC:4A:1B:B5:C7
+Signature algorithm name: SHA256withRSA
+Subject Public Key Algorithm: 2048-bit RSA key
+Version: 3
+
+Extensions: 
+
+#1: ObjectId: 2.5.29.14 Criticality=false
+SubjectKeyIdentifier [
+KeyIdentifier [
+0000: 72 7A 15 6E 89 42 38 3E   2F DD 20 C9 69 20 6F 9B  rz.n.B8>/. .i o.
+0010: 66 6E 40 35                                        fn@5
+]
+]
+
+
+*******************************************
+*******************************************
+
+Keystore type: JCEKS
+Keystore provider: SunJCE
+
+Your keystore contains 1 entry
+
+server-alias, Oct 8, 2018, trustedCertEntry, 
+Certificate fingerprint (SHA1): 52:94:E7:A1:03:22:45:85:8D:69:A0:D6:82:2A:1F:7F:16:0A:4C:3C
+```
+
+### Generating SecureKey
+
+> Generate SecureKey by running:
+
+```
+$ ./generate_securekey.sh 
+
+Keystore type: JCEKS
+Keystore provider: SunJCE
+
+Your keystore contains 1 entry
+
+Alias name: securekey
+Creation date: Oct 8, 2018
+Entry type: SecretKeyEntry
+
+
+*******************************************
+*******************************************
+```
 
 > The server
 ```
