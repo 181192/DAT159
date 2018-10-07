@@ -80,6 +80,7 @@ public class SslServer implements IParent {
 
     /**
      * Get the SSL server socket
+     *
      * @return
      */
     private static SSLServerSocket getSocket() {
@@ -91,6 +92,7 @@ public class SslServer implements IParent {
 
     /**
      * Helper method to get the SSL socket
+     *
      * @param ssf
      * @return
      */
@@ -106,6 +108,7 @@ public class SslServer implements IParent {
 
     /**
      * Get the SSL Server Socket Factory
+     *
      * @return
      */
     private static SSLServerSocketFactory getSslServerSocketFactory() {

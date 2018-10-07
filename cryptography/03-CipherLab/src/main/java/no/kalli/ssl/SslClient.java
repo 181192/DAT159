@@ -12,7 +12,10 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 
-import static no.kalli.ssl.SslUtility.*;
+import static no.kalli.Utility.configure;
+import static no.kalli.Utility.msg;
+import static no.kalli.ssl.SslUtility.getSslContext;
+import static no.kalli.ssl.SslUtility.setClientSystemProperties;
 
 /**
  * @author Kristoffer-Andre Kalliainen
@@ -69,6 +72,7 @@ public class SslClient implements IParent {
 
     /**
      * Get the SSL Socket
+     *
      * @return
      */
     private static SSLSocket getSocket() {
@@ -80,6 +84,7 @@ public class SslClient implements IParent {
 
     /**
      * Helper method to get the SSL Socket
+     *
      * @param factory
      * @return
      */
@@ -95,6 +100,7 @@ public class SslClient implements IParent {
 
     /**
      * Get the SSL Socket Factory
+     *
      * @return
      */
     private static SSLSocketFactory getSslSocketFactory() {

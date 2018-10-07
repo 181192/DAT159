@@ -1,6 +1,7 @@
 package no.kalli.basic;
 
 import no.kalli.IParent;
+import no.kalli.Utility;
 import picocli.CommandLine;
 
 import java.io.IOException;
@@ -15,14 +16,14 @@ import java.nio.charset.StandardCharsets;
 public class Client implements IParent {
 
     public static void main(String[] args) {
-        CommandLine commandLine = new CommandLine(new BasicUtility());
+        CommandLine commandLine = new CommandLine(new Utility());
         commandLine.parse(args);
         if (commandLine.isUsageHelpRequested()) {
             commandLine.usage(System.out);
             return;
         }
 
-        BasicUtility.configure(args);
+        Utility.configure(args);
 
         var client = new Client();
         client.sendAndReceice();
@@ -42,7 +43,7 @@ public class Client implements IParent {
             ois = new ObjectInputStream(client.getInputStream());
 
             // send message to server
-            oos.writeObject(BasicUtility.msg);
+            oos.writeObject(Utility.msg);
             oos.flush();
 
             // receive response from server

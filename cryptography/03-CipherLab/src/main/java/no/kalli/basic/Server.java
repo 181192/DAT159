@@ -1,6 +1,7 @@
 package no.kalli.basic;
 
 import no.kalli.IParent;
+import no.kalli.Utility;
 import picocli.CommandLine;
 
 import java.io.IOException;
@@ -21,14 +22,14 @@ public class Server implements IParent {
      * @param args
      */
     public static void main(String args[]) {
-        CommandLine commandLine = new CommandLine(new BasicUtility());
+        CommandLine commandLine = new CommandLine(new Utility());
         commandLine.parse(args);
         if (commandLine.isUsageHelpRequested()) {
             commandLine.usage(System.out);
             return;
         }
 
-        BasicUtility.configure(args);
+        Utility.configure(args);
 
         var server = new Server();
         // Wait for requests
