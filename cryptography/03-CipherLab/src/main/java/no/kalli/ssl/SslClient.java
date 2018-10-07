@@ -1,6 +1,7 @@
 package no.kalli.ssl;
 
 import no.kalli.IParent;
+import no.kalli.Utility;
 import picocli.CommandLine;
 
 import javax.net.ssl.SSLContext;
@@ -23,7 +24,7 @@ import static no.kalli.ssl.SslUtility.setClientSystemProperties;
 public class SslClient implements IParent {
 
     public static void main(String[] args) {
-        var commandLine = new CommandLine(new SslUtility());
+        var commandLine = new CommandLine(new Utility());
         commandLine.parse(args);
         if (commandLine.isUsageHelpRequested()) {
             commandLine.usage(System.out);
