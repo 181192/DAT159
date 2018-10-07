@@ -27,6 +27,7 @@ class SslUtility {
     @CommandLine.Option(names = {"-h", "--help"}, usageHelp = true, description = "display a help message")
     private boolean helpRequested = false;
 
+    private final static String SSL_KEYSTORE = "ssl_keystore.jceks";
 
     /**
      * Little hack to assign the message to an byte array
@@ -78,15 +79,16 @@ class SslUtility {
      * @return
      */
     private static URL getCaCert() {
-        return SslClient.class.getClassLoader().getResource("cacerts.jks");
+        return SslClient.class.getClassLoader().getResource("cacerts.jceks");
     }
 
     /**
      * Get the keystore
-     * @return
+     * @param keystore keystore file name
+     * @return Inputstream of keystore
      */
-    private static InputStream getKeyStore() {
-        return getFile("keystore.jks");
+    private static InputStream getKeyStore(String keystore) {
+        return getFile(keystore);
     }
 
     /**
@@ -137,8 +139,8 @@ class SslUtility {
         try {
             ctx = SSLContext.getInstance("TLS");
             kmf = KeyManagerFactory.getInstance("SunX509");
-            ks = KeyStore.getInstance("JKS");
-            ks.load(getKeyStore(), getPasswordAsCharArray());
+            ks = KeyStore.getInstance("JCEKS");
+            ks.load(getKeyStore(SSL_KEYSTORE), getPasswordAsCharArray());
             kmf.init(ks, getPasswordAsCharArray());
             ctx.init(kmf.getKeyManagers(), dummyTrustManager, null);
         } catch (NoSuchAlgorithmException | IOException | CertificateException | KeyStoreException | UnrecoverableKeyException | KeyManagementException e) {
