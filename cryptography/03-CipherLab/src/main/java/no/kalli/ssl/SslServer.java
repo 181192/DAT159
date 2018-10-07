@@ -58,7 +58,7 @@ public class SslServer implements IParent {
             ois = new ObjectInputStream(client.getInputStream());
 
             // Receive message from the client
-            byte[] clientMsg = (byte[]) ois.readObject();
+            var clientMsg = (byte[]) ois.readObject();
 
             // Print the message in UTF-8 format
             System.out.println("Message from DesClient: " + new String(clientMsg, StandardCharsets.UTF_8));

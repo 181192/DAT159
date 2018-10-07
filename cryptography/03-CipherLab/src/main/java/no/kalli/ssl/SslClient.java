@@ -55,7 +55,7 @@ public class SslClient implements IParent {
             oos.flush();
 
             // receive response from server
-            byte[] response = (byte[]) ois.readObject();
+            var response = (byte[]) ois.readObject();
 
             System.out.println("Response from server: " + new String(response, StandardCharsets.UTF_8));
 

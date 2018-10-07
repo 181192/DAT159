@@ -10,20 +10,23 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 
+import static no.kalli.Utility.configure;
+import static no.kalli.Utility.msg;
+
 /**
  * @author Kristoffer-Andre Kalliainen
  */
 public class Client implements IParent {
 
     public static void main(String[] args) {
-        CommandLine commandLine = new CommandLine(new Utility());
+        var commandLine = new CommandLine(new Utility());
         commandLine.parse(args);
         if (commandLine.isUsageHelpRequested()) {
             commandLine.usage(System.out);
             return;
         }
 
-        Utility.configure(args);
+        configure(args);
 
         var client = new Client();
         client.sendAndReceice();
@@ -43,11 +46,11 @@ public class Client implements IParent {
             ois = new ObjectInputStream(client.getInputStream());
 
             // send message to server
-            oos.writeObject(Utility.msg);
+            oos.writeObject(msg);
             oos.flush();
 
             // receive response from server
-            byte[] response = (byte[]) ois.readObject();
+            var response = (byte[]) ois.readObject();
 
             System.out.println("Response from server: " + new String(response, StandardCharsets.UTF_8));
 

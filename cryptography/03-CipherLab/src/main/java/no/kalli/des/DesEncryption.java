@@ -62,7 +62,7 @@ class DesEncryption {
      */
     byte[] encrypt(byte[] input) throws Exception {
         // Encrypt
-        byte[] enc = ecipher.doFinal(input);
+        var enc = ecipher.doFinal(input);
 
         // Encode bytes to base64 to get a string
         return Base64.getEncoder().encode(enc);

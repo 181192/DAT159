@@ -20,7 +20,7 @@ public class DesClient implements IParent {
     private static DesEncryption des;
 
     public static void main(String[] args) {
-        CommandLine commandLine = new CommandLine(new Utility());
+        var commandLine = new CommandLine(new Utility());
         commandLine.parse(args);
         if (commandLine.isUsageHelpRequested()) {
             commandLine.usage(System.out);
@@ -53,8 +53,8 @@ public class DesClient implements IParent {
             oos.flush();
 
             // receive response from server
-            byte[] response = (byte[]) ois.readObject();
-            byte[] decrypt = des.decrypt(response);
+            var response = (byte[]) ois.readObject();
+            var decrypt = des.decrypt(response);
 
             System.out.println("Response from server: " + new String(decrypt, StandardCharsets.UTF_8));
 

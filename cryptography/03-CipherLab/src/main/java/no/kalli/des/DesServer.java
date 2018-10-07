@@ -24,7 +24,7 @@ public class DesServer implements IParent {
      * @param args
      */
     public static void main(String args[]) {
-        CommandLine commandLine = new CommandLine(new Utility());
+        var commandLine = new CommandLine(new Utility());
         commandLine.parse(args);
         if (commandLine.isUsageHelpRequested()) {
             commandLine.usage(System.out);
@@ -56,14 +56,14 @@ public class DesServer implements IParent {
             ois = new ObjectInputStream(client.getInputStream());
 
             // Receive message from the client
-            byte[] clientMsg = (byte[]) ois.readObject();
-            byte[] decrypt = des.decrypt(clientMsg);
+            var clientMsg = (byte[]) ois.readObject();
+            var decrypt = des.decrypt(clientMsg);
 
             // Print the message in UTF-8 format
             System.out.println("Message from DesClient: " + new String(decrypt, StandardCharsets.UTF_8));
 
             // Send the plaintext response message to the client
-            byte[] encrypt = des.encrypt(decrypt);
+            var encrypt = des.encrypt(decrypt);
             oos.writeObject(encrypt);
             oos.flush();
 

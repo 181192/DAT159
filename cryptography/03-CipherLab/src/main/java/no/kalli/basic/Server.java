@@ -11,6 +11,8 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 
+import static no.kalli.Utility.configure;
+
 
 /**
  * @author Kristoffer-Andre Kalliainen
@@ -22,14 +24,14 @@ public class Server implements IParent {
      * @param args
      */
     public static void main(String args[]) {
-        CommandLine commandLine = new CommandLine(new Utility());
+        var commandLine = new CommandLine(new Utility());
         commandLine.parse(args);
         if (commandLine.isUsageHelpRequested()) {
             commandLine.usage(System.out);
             return;
         }
 
-        Utility.configure(args);
+        configure(args);
 
         var server = new Server();
         // Wait for requests
@@ -54,7 +56,7 @@ public class Server implements IParent {
             ois = new ObjectInputStream(client.getInputStream());
 
             // Receive message from the client
-            byte[] clientMsg = (byte[]) ois.readObject();
+            var clientMsg = (byte[]) ois.readObject();
 
             // Print the message in UTF-8 format
             System.out.println("Message from DesClient: " + new String(clientMsg, StandardCharsets.UTF_8));
