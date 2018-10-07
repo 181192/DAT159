@@ -4,7 +4,6 @@ import javax.crypto.Cipher;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.security.*;
 import java.security.cert.CertificateException;
 import java.util.Base64;
@@ -15,50 +14,71 @@ import static no.kalli.Utility.getPasswordAsCharArray;
 
 class DesEncryption {
 
-    public static final String DES_KEYSTORE = "des_keystore.jceks";
-
+    private static final String DES_KEYSTORE = "des_keystore.jceks";
     private static DesEncryption utility;
-
     private Cipher ecipher;
-
     private Cipher dcipher;
 
+    /**
+     * Singleton creator for managing instances of Cipher while persist static methods, and loading the secretkey from a
+     * keystore.
+     *
+     * @return A DesEncryption instance
+     */
     static synchronized DesEncryption getInstance() {
         if (utility == null) {
             try {
                 utility = new DesEncryption(getSecretKey());
-            } catch (NoSuchPaddingException | NoSuchAlgorithmException | InvalidKeyException e) {
+            } catch (NoSuchPaddingException | NoSuchAlgorithmException | InvalidKeyException | NoSuchProviderException e) {
                 e.printStackTrace();
             }
         }
         return utility;
     }
 
-    DesEncryption(SecretKey key) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException {
-        ecipher = Cipher.getInstance("DES");
-        dcipher = Cipher.getInstance("DES");
+    /**
+     * Private constructor for DesEncryption. Setting up instances for encryption and decryption with a SecretKey
+     *
+     * @param key The secretkey
+     * @throws NoSuchPaddingException
+     * @throws NoSuchAlgorithmException
+     * @throws InvalidKeyException
+     * @throws NoSuchProviderException
+     */
+    private DesEncryption(SecretKey key) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, NoSuchProviderException {
+        Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
+        ecipher = Cipher.getInstance("DES/ECB/PKCS7Padding", "BC");
+        dcipher = Cipher.getInstance("DES/ECB/PKCS7Padding", "BC");
         ecipher.init(Cipher.ENCRYPT_MODE, key);
         dcipher.init(Cipher.DECRYPT_MODE, key);
     }
 
-    public String encrypt(String str) throws Exception {
-        // Encode the string into bytes using utf-8
-        byte[] utf8 = str.getBytes(StandardCharsets.UTF_8);
-
+    /**
+     * Encrypt a byte array
+     *
+     * @param input the input
+     * @return encrypted base64 byte array
+     * @throws Exception
+     */
+    byte[] encrypt(byte[] input) throws Exception {
         // Encrypt
-        byte[] enc = ecipher.doFinal(utf8);
+        byte[] enc = ecipher.doFinal(input);
 
         // Encode bytes to base64 to get a string
-        return new String(Base64.getEncoder().encode(enc), StandardCharsets.UTF_8);
+        return Base64.getEncoder().encode(enc);
     }
 
-    public String decrypt(String str) throws Exception {
+    /**
+     * Decrypt a byte array
+     *
+     * @param input the input
+     * @return decrypted base64 byte array
+     * @throws Exception
+     */
+    byte[] decrypt(byte[] input) throws Exception {
         // Decode base64 to get bytes
-        byte[] dec = Base64.getDecoder().decode(str);
-        byte[] utf8 = dcipher.doFinal(dec);
-
-        // Decode using utf-8
-        return new String(utf8, StandardCharsets.UTF_8);
+        byte[] dec = Base64.getDecoder().decode(input);
+        return dcipher.doFinal(dec);
     }
 
     /**
@@ -80,22 +100,5 @@ class DesEncryption {
             e.printStackTrace();
         }
         return secretKey;
-    }
-
-    public static void main(String[] args) throws Exception {
-        SecretKey key = getSecretKey();
-        DesEncryption encrypter = null;
-
-        try {
-            encrypter = new DesEncryption(key);
-        } catch (NoSuchPaddingException | NoSuchAlgorithmException | InvalidKeyException e) {
-            e.printStackTrace();
-        }
-
-        String encrypted = encrypter.encrypt("Don't tell anybody!");
-        String decrypted = encrypter.decrypt(encrypted);
-
-        System.out.println(encrypted);
-        System.out.println(decrypted);
     }
 }

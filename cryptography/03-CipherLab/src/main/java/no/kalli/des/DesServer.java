@@ -1,9 +1,9 @@
 package no.kalli.des;
 
 import no.kalli.IParent;
+import no.kalli.Utility;
 import picocli.CommandLine;
 
-import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
@@ -15,20 +15,23 @@ import java.nio.charset.StandardCharsets;
  * @author Kristoffer-Andre Kalliainen
  */
 public class DesServer implements IParent {
+
+    private static DesEncryption des;
+
     /**
      * Main Method
      *
      * @param args
      */
     public static void main(String args[]) {
-        CommandLine commandLine = new CommandLine(new DesUtility());
+        CommandLine commandLine = new CommandLine(new Utility());
         commandLine.parse(args);
         if (commandLine.isUsageHelpRequested()) {
             commandLine.usage(System.out);
             return;
         }
 
-        DesUtility.configure(args);
+        des = DesEncryption.getInstance();
 
         var server = new DesServer();
         // Wait for requests
@@ -54,12 +57,14 @@ public class DesServer implements IParent {
 
             // Receive message from the client
             byte[] clientMsg = (byte[]) ois.readObject();
+            byte[] decrypt = des.decrypt(clientMsg);
 
             // Print the message in UTF-8 format
-            System.out.println("Message from DesClient: " + new String(clientMsg, StandardCharsets.UTF_8));
+            System.out.println("Message from DesClient: " + new String(decrypt, StandardCharsets.UTF_8));
 
             // Send the plaintext response message to the client
-            oos.writeObject(clientMsg);
+            byte[] encrypt = des.encrypt(decrypt);
+            oos.writeObject(encrypt);
             oos.flush();
 
             // Close DesClient and DesServer sockets
@@ -68,7 +73,7 @@ public class DesServer implements IParent {
             oos.close();
             ois.close();
 
-        } catch (IOException | ClassNotFoundException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 

@@ -1,28 +1,35 @@
 package no.kalli.des;
 
 import no.kalli.IParent;
+import no.kalli.Utility;
 import picocli.CommandLine;
 
-import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
+
+import static no.kalli.Utility.configure;
+import static no.kalli.Utility.msg;
 
 /**
  * @author Kristoffer-Andre Kalliainen
  */
 public class DesClient implements IParent {
 
+    private static DesEncryption des;
+
     public static void main(String[] args) {
-        CommandLine commandLine = new CommandLine(new DesUtility());
+        CommandLine commandLine = new CommandLine(new Utility());
         commandLine.parse(args);
         if (commandLine.isUsageHelpRequested()) {
             commandLine.usage(System.out);
             return;
         }
 
-        DesUtility.configure(args);
+        configure(args);
+
+        des = DesEncryption.getInstance();
 
         var client = new DesClient();
         client.sendAndReceice();
@@ -42,22 +49,22 @@ public class DesClient implements IParent {
             ois = new ObjectInputStream(client.getInputStream());
 
             // send message to server
-            oos.writeObject(DesUtility.msg);
+            oos.writeObject(des.encrypt(msg));
             oos.flush();
 
             // receive response from server
             byte[] response = (byte[]) ois.readObject();
+            byte[] decrypt = des.decrypt(response);
 
-            System.out.println("Response from server: " + new String(response, StandardCharsets.UTF_8));
+            System.out.println("Response from server: " + new String(decrypt, StandardCharsets.UTF_8));
 
             // close cliet socket
             client.close();
             ois.close();
             oos.close();
 
-        } catch (ClassNotFoundException | IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
 }
