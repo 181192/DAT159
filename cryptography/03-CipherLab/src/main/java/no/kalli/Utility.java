@@ -6,7 +6,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-
+import java.nio.charset.StandardCharsets;
 
 
 @CommandLine.Command(name = "Basic",
@@ -27,7 +27,7 @@ public class Utility {
      * @param args args
      */
     public static void configure(String[] args) {
-        msg = message.getBytes();
+        msg = message.getBytes(StandardCharsets.UTF_8);
     }
 
     /**
