@@ -1,7 +1,15 @@
 # 03-CipherLab - Oblig02
 
+##### *By Kristoffer-Andre Kalliainen (181192)*
+[GitHub repository - 181192](https://github.com/181192/DAT159/tree/master/cryptography/03-CipherLab)
 
-CLI support made possibe with [PicoCLI](https://github.com/remkop/picocli). Compiled with Java 10.
+## About the project
+- CLI support made possible with [PicoCLI](https://github.com/remkop/picocli)
+- Compiled with Java 10
+- Using [Maven](https://maven.apache.org/) as build framework and [dependency manager](https://mvnrepository.com/)
+- [Maven-Assemby-Plugin](http://maven.apache.org/plugins/maven-assembly-plugin/) to deploy multiple jars from the same source code
+
+To build the project from scratch run `mvn clean install` in the project directory, or provide a path to the `pom.xml`.
 
 Implemented help support either with `-h` or with `--help`:
 
