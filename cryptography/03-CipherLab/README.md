@@ -21,16 +21,22 @@ This is just the standard CipherLab.zip.
 $ java -jar target/BasicServer-1.0.0-jar-with-dependencies.jar
 Waiting for requests from client...
 Connected to client at the address: /127.0.0.1
-Message from DesClient: ThisIsACoolTest
+Message from DesClient: This is really cool
 Waiting for requests from client...
 ```
 
 > The client
 ```
-$ java -jar target/BasicClient-1.0.0-jar-with-dependencies.jar -m ThisIsACoolTest
+$ java -jar target/BasicClient-1.0.0-jar-with-dependencies.jar -m "This is really cool"
 Connected to DesServer on localhost/127.0.0.1
-Response from server: ThisIsACoolTest
+Response from server: This is really cool
 ```
+
+### Wireshark
+Here's an screenshot from the "basic" server-client program. Since the communication is going over standard
+tcp we can read the communication in clear text. The highlighted text is the message the client is sending the server
+The message that is being sent is `This is really cool`.
+![wireshark output - basic](https://raw.githubusercontent.com/181192/DAT159/master/cryptography/03-CipherLab/wireshark-output/pictures/basic.png)
 
 
 ## Part 02 - DES encryption
@@ -41,16 +47,24 @@ This is a DES implementation using ECB mode with Bounty Castle Provider and Secr
 $ java -jar target/DesServer-1.0.0-jar-with-dependencies.jar
 Waiting for requests from client...
 Connected to client at the address: /127.0.0.1
-Message from DesClient: ThisIsACoolTest
+Message from DesClient: DES is also cool
 Waiting for requests from client...
 ```
 
 > The client
 ```
-$ java -jar target/DesClient-1.0.0-jar-with-dependencies.jar -m ThisIsACoolTest
+$ java -jar target/DesClient-1.0.0-jar-with-dependencies.jar -m "DES is also cool"
 Connected to DesServer on localhost/127.0.0.1
-Response from server: ThisIsACoolTest
+Response from server: DES is also cool
 ```
+
+### Wireshark
+Here's an screenshot from the "DES" version of the server-client program. The traffic is still unsecured but the message
+is encrypted. So we can analyse all the steps in the TCP handshake and retrieve information, but the message itself
+is encrypted with DES and we can only see a Base64 representation of the message. The highlighted row is the message
+the client is sending the server. The message is `DES is also cool` 
+
+![wireshark output - DES](https://raw.githubusercontent.com/181192/DAT159/master/cryptography/03-CipherLab/wireshark-output/pictures/DES.png)
 
 ## Part 03 - SSL and CA
 This is a SSL implementation with Certificate Authority using Java TrustStore and KeyStore.
@@ -187,7 +201,23 @@ Connected to DesServer on localhost/127.0.0.1
 Response from server: ThisIsACoolTest
 ```
 
+### Wireshark
+
+The following picture shows the certificate in the wireshark output.
+![wireshark output - CA certificate](https://raw.githubusercontent.com/181192/DAT159/master/cryptography/03-CipherLab/wireshark-output/pictures/CA-certificate.png)
+
+
+Here's an screenshot from the "SSL" version of the server-client program. The traffic is now encrypted with TLS 1.2, so
+we can't see the information being sent over TCP, it's all encrypted. The highlighted row on the image is showing the 
+message being sent from the client to the server. As we see the traffic is encrypted and we can't retrieve any usefull
+information about the message being sent.
+![wireshark output - SSL](https://raw.githubusercontent.com/181192/DAT159/master/cryptography/03-CipherLab/wireshark-output/pictures/ssl.png)
+
 ## Resources
+Here's some resources used for inspiration, and some resources for solving the problems that I had solving this 
+assignment. Especially there was some struggling with the TrustStore and KeyStore for the CA-certificate. And when
+I needed to store a SecureKey in the KeyStore I needed to use a JCEKS that support storing SecureKeys and other 
+keypair, instead of the "standard" JKS format.
 
 - [Java2s - Encrypting a string with DES](http://www.java2s.com/Code/Java/Security/EncryptingaStringwithDES.htm)
 - [Stackoverflow - Base64 Encoding in Java](https://stackoverflow.com/questions/13109588/base64-encoding-in-java)
