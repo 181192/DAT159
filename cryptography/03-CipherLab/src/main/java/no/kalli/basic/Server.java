@@ -31,8 +31,6 @@ public class Server implements IParent {
             return;
         }
 
-        configure(args);
-
         var server = new Server();
         // Wait for requests
         while (true) {
