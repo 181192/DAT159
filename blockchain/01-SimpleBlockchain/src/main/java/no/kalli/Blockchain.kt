@@ -17,9 +17,7 @@ class Blockchain(miningDifficulty: Int) {
      * This method [hashLastBlock] returns the hash of the last block appended to the chain
      * If the chain is empty, "0" is returned.
      */
-    fun hashLastBlock(): String {
-        return if (listOfBlocks.isEmpty()) "0" else listOfBlocks.last().hash
-    }
+    fun hashLastBlock(): String = if (listOfBlocks.isEmpty()) "0" else listOfBlocks.last().hash
 
     /**
      * This method [isValidChain] validate the entire chain
@@ -41,23 +39,8 @@ class Blockchain(miningDifficulty: Int) {
      * Validate and append [b] to chain of valid
      * @return wheter everything went OK and [b] was appended
      */
-    fun validateAndAppendNewBlock(b: Block): Boolean {
-        return if (b.isValidAsNextBlock(hashLastBlock(), miningTarget))
-            listOfBlocks.add(b)
-        else false
-    }
-}
-
-fun main(args: Array<String>) {
-    val miningTarget = "^0{5}.*"
-
-    val matcher = Pattern.compile(miningTarget).matcher("00000=sadSADF!!FAFAS")
-    var match = ""
-
-    if (matcher.matches()) {
-        println("MAAAATCH")
-        match = matcher.group(0)
-    }
-
-    println(match)
+    fun validateAndAppendNewBlock(b: Block): Boolean =
+            if (b.isValidAsNextBlock(hashLastBlock(), miningTarget))
+                listOfBlocks.add(b)
+            else false
 }

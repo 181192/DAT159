@@ -11,7 +11,7 @@ class Miner(private val chain: Blockchain) {
      * it returns the mined block. The method takes the [data] as an argument.
      */
     fun createAndMineNewBlock(data: String): Block {
-        val newBlock = Block(chain.hashLastBlock(),data)
+        val newBlock = Block(chain.hashLastBlock(), data)
         newBlock.mine(chain.miningTarget)
         chain.validateAndAppendNewBlock(newBlock)
         return newBlock

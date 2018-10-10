@@ -3,7 +3,6 @@ package no.kalli
 import java.io.UnsupportedEncodingException
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
-import java.util.*
 import java.util.regex.Pattern
 import javax.xml.bind.DatatypeConverter
 
@@ -41,7 +40,7 @@ class Block(hashLastBlock: String, // The data for this block.
      * the [miningTarget] mining target.
      */
     fun isValidAsNextBlock(hashLastBlock: String, miningTarget: String): Boolean =
-            hashLastBlock  == prev && Pattern.compile(miningTarget).matcher(hash).matches()
+            hashLastBlock == prev && Pattern.compile(miningTarget).matcher(hash).matches()
 
     /**
      * The method [calculateHash] calculates the hash for this block based on the other instance variables.
@@ -52,9 +51,7 @@ class Block(hashLastBlock: String, // The data for this block.
     /**
      * Amazing to-string method
      */
-    override fun toString(): String {
-        return "Block [data=$data\t nonce=$nonce\t hash=$hash\t prev=$prev]"
-    }
+    override fun toString(): String = "Block [data=$data\t nonce=$nonce\t hash=$hash\t prev=$prev]"
 
     @Throws(NoSuchAlgorithmException::class, UnsupportedEncodingException::class)
     private fun createSha256Hash(s: String): ByteArray {
