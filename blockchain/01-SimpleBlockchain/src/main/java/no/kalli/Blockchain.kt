@@ -10,14 +10,14 @@ import java.util.regex.Pattern
  */
 class Blockchain(miningDifficulty: Int) {
 
-    var miningTarget = "^0{$miningDifficulty}.*"
+    var miningTarget = "^0{$miningDifficulty}(\\d|\\D){59}$"
     var listOfBlocks = ArrayList<Block>()
 
     /**
      * This method [hashLastBlock] returns the hash of the last block appended to the chain
      * If the chain is empty, "0" is returned.
      */
-    fun hashLastBlock(): String = if (listOfBlocks.isEmpty()) "0" else listOfBlocks.last().hash
+    fun hashLastBlock(): String = if (listOfBlocks.isEmpty()) "0".repeat(64) else listOfBlocks.last().hash
 
     /**
      * This method [isValidChain] validate the entire chain
