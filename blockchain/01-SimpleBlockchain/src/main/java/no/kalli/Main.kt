@@ -28,7 +28,7 @@ private fun runTheMiner(miner: Miner, numberOfRounds: Int) {
         var b = Block("", "")
 
         val time = measureTimeMillis {
-            b = miner.createAndMineNewBlock(Math.random().toString())
+            b = miner.createAndMineNewBlock(Math.random().toString())!!
         }
 
         print("Total time: $time milli sec\t")
