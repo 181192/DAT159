@@ -1,28 +1,25 @@
-package no.kalli;
+package no.kalli
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*
 
-public class UTXO {
+class UTXO {
 
     //Why is this a Map and not a Set?
     //  The values in this map are the UTXOs (unspent Outputs)
     //  When removing UTXOs, we need to identify which to remove.
     //  Since the Inputs are references to UTXOs, we can use those
     //  as keys.
-    private Map<Input, Output> map = new HashMap<>();
+    private val map = HashMap<Input, Output>()
 
-    public void printUTXO() {
+    fun printUTXO() {
         //TODO
     }
 
-    public void addOutputFrom(CoinbaseTx ctx) {
+    fun addOutputFrom(ctx: CoinbaseTx) {
         //TODO
     }
 
-    public void addAndRemoveOutputsFrom(Transaction tx) {
+    fun addAndRemoveOutputsFrom(tx: Transaction) {
         //TODO
     }
-
-    //TODO Getters?
 }

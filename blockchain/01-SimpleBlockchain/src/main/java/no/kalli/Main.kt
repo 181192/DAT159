@@ -4,7 +4,7 @@ import kotlin.system.measureTimeMillis
 
 
 fun main(args: Array<String>) {
-    val difficulty = 5
+    val difficulty = 6
     val numberOfRounds = 8
     val chain = Blockchain(difficulty)
     val miner = Miner(chain)
