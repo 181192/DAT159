@@ -3,7 +3,7 @@ package no.kalli
 import java.security.KeyPair
 import java.security.PublicKey
 
-class Wallet(var id: String = "", var utxo: UTXO)//TODO
+class Wallet(var id: String, var utxo: UTXO)
 {
 
     //A refererence to the "global" complete utxo-set
