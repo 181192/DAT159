@@ -12,17 +12,18 @@ class UTXO {
      * Since the Inputs are references to UTXOs, we can use those
      * as keys.
      */
-    private val map = HashMap<Input, Output>()
+    val map = HashMap<Input, Output>()
 
     /**
      * [printUTXO] prints out the UTXO [map]
      */
-    fun printUTXO() = map.forEach { t, u -> println("$t\t|\t$u") }
+    fun printUTXO() = map.forEach { t: Input, u: Output -> println("$t\t|\t$u") }
 
     /**
      * [addOutputFrom] add an [Output] from the [CoinbaseTx]
      */
     fun addOutputFrom(ctx: CoinbaseTx) {
+        // TODO Add the prevTxHash and prevOutputIndex
         map[Input("", -1)] = ctx.output
     }
 

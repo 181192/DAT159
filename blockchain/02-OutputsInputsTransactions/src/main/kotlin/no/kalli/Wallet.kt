@@ -4,10 +4,10 @@ import java.security.KeyPair
 import java.security.PublicKey
 
 
-class Wallet(var id: String, var utxo: UTXO) {
+class Wallet(var id: String, utxo: Map<Input, Output>) {
 
     //A refererence to the "global" complete utxo-set
-    private var utxoMap: Map<Input, Output> = emptyMap()
+    private var utxoMap: Map<Input, Output> = utxo
 
     private val keyPair: KeyPair = DSAUtil.generateRandomDSAKeyPair()
 
@@ -25,7 +25,7 @@ class Wallet(var id: String, var utxo: UTXO) {
     private fun collectMyUtxo(): Map<Input, Output>? = utxoMap.filterValues { it.address == address }
 
     @Throws(Exception::class)
-    fun createTransaction(value: Long, address: String): Transaction? {
+    fun createTransaction(value: Long, address: String): Transaction {
 
         // 1. Collect all UTXO for this wallet and calculate balance
         val myUTXO = collectMyUtxo() ?: throw Exception("No transactions")
@@ -56,7 +56,7 @@ class Wallet(var id: String, var utxo: UTXO) {
 
         // 7. Add 1 or 2 outputs, depending on change
         transaction.addOutput(Output(value, address))
-        if (change > 0) transaction.addOutput(Output(change, address))
+        if (change > 0) transaction.addOutput(Output(change, this.address))
 
         // 8. Sign the transaction
         transaction.signTxUsing(keyPair.private)
@@ -71,5 +71,10 @@ class Wallet(var id: String, var utxo: UTXO) {
         // when appending the block to the blockchain, and not here!
         // Do that manually from the Application-no.kalli.main.
     }
+
+    override fun toString(): String {
+        return "Wallet(id='$id', address=$address, balance=$balance)"
+    }
+
 
 }

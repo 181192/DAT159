@@ -15,13 +15,13 @@ class Transaction(var senderPublicKey: PublicKey) {
     //same key, we can have one signature for the entire transaction,
     //and not one for each input. This simplifies things a lot
     //(more than you think)!
-    private var signature: ByteArray? = null
+    private var signature: ByteArray = byteArrayOf(0)
 
     var txHash: String = ""
 
     //TODO Complete validation of the transaction. Called by the Application.
     fun isValid(): Boolean {
-        return false
+        return true
     }
 
     fun addInput(input: Input) = inputs.add(input)
@@ -29,7 +29,7 @@ class Transaction(var senderPublicKey: PublicKey) {
     fun addOutput(output: Output) = outputs.add(output)
 
     override fun toString(): String =
-            "Trasaction( $txHash )\n\tInputs: ${inputsToString()}\n\tOutputs: ${outputsToString()}"
+            "Trasaction( $txHash )\n\tInputs:\n\t\t${inputsToString()}\n\tOutputs:\n\t\t${outputsToString()}"
 
     fun signTxUsing(privateKey: PrivateKey) {
         signature = DSAUtil.signWithDSA(
@@ -41,8 +41,8 @@ class Transaction(var senderPublicKey: PublicKey) {
                 HashUtil.sha256Hash(inputsToString() + outputsToString()))
     }
 
-    private fun inputsToString(): String = inputs.stream().map(Input::toString).collect(Collectors.joining(", "))
+    private fun inputsToString(): String = inputs.stream().map(Input::toString).collect(Collectors.joining("\n\t\t"))
 
-    private fun outputsToString(): String = outputs.stream().map(Output::toString).collect(Collectors.joining(", "))
+    private fun outputsToString(): String = outputs.stream().map(Output::toString).collect(Collectors.joining("\n\t\t"))
 
 }
