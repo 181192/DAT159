@@ -21,7 +21,10 @@ class Transaction(var senderPublicKey: PublicKey) {
 
     //TODO Complete validation of the transaction. Called by the Application.
     fun isValid(): Boolean {
-        return true
+        return inputs.isNotEmpty()
+                && outputs.isNotEmpty()
+                && outputs.stream().allMatch { it.value < 21000000 && it.value > 0 }
+
     }
 
     fun addInput(input: Input) = inputs.add(input)
