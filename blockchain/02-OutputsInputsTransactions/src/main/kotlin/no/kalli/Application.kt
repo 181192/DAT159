@@ -1,7 +1,6 @@
 package no.kalli
 
-
-private val utxo = UTXO()
+import kotlin.math.roundToLong
 
 @Throws(Exception::class)
 fun main(args: Array<String>) {
@@ -38,10 +37,9 @@ fun main(args: Array<String>) {
     //    transaction and a regular transaction. The regular transaction shall
     //    send ~20% of the money from the "miner"'s address to the other address.
     var coinbaseTx = CoinbaseTx("Hello from the other side", 100, minerWallet.address)
-    globalUTXO.addOutputFrom(coinbaseTx)
 
     try {
-        val regularTx = minerWallet.createTransaction((minerWallet.balance * 0.20).toLong(), myWallet.address)
+        val regularTx = minerWallet.createTransaction((minerWallet.balance * 0.20).roundToLong(), myWallet.address)
 
         //    Validate the regular transaction created by the "miner"'s wallet:
         //      - All the content must be valid (not null++)!!!
@@ -60,12 +58,13 @@ fun main(args: Array<String>) {
         e.printStackTrace()
     }
 
+    globalUTXO.addOutputFrom(coinbaseTx)
+
 
     // 3. Do the same once more. Now, the "miner"'s address should have two or more
     //    unspent outputs (depending on the strategy for choosing inputs) with a
     //    total of 2.6 * block reward, and the other address should have 0.4 ...
     coinbaseTx = CoinbaseTx("Hello darkness, my old friend", 100, minerWallet.address)
-    globalUTXO.addOutputFrom(coinbaseTx)
 
     try {
         val regularTx = minerWallet.createTransaction((minerWallet.balance * 0.20).toLong(), myWallet.address)
@@ -78,26 +77,12 @@ fun main(args: Array<String>) {
         e.printStackTrace()
     }
 
+    globalUTXO.addOutputFrom(coinbaseTx)
+
+
     // 4. Make a nice print-out of all that has happened, as well as the end status.
-    //
-    //      for each of the "block"s (rounds), print
-    //          "block" number
-    //          the message transaction
-    //              hash, message
-    //              output
-    //          the regular transaction(s), if any
-    //              hash
-    //              inputs
-    //              outputs
-    //      End status: the set of unspent outputs
-    //      End status: for each of the wallets, print
-    //          wallet id, address, balance
-
-
     println("UTXO:")
     globalUTXO.printUTXO()
     println("\nThe miner's wallet:\n$minerWallet")
     println("\nMy wallet:\n$myWallet")
-
-
 }
