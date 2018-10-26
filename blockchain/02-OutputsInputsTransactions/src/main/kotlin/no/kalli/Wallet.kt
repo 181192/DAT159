@@ -18,7 +18,7 @@ class Wallet(var id: String, utxo: Map<Input, Output>) {
         get() = keyPair.public
 
     val balance: Long
-        get() = calculateBalance(utxoMap.filterValues { it.address == address }.values)
+        get() = calculateBalance(collectMyUtxo()!!.values)
 
     private fun calculateBalance(outputs: Collection<Output>): Long = outputs.stream().mapToLong(Output::value).sum()
 
