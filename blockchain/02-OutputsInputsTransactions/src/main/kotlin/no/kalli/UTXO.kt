@@ -23,8 +23,7 @@ class UTXO {
      * [addOutputFrom] add an [Output] from the [CoinbaseTx]
      */
     fun addOutputFrom(ctx: CoinbaseTx) {
-        // TODO Add the prevTxHash and prevOutputIndex
-        map[Input("", -1)] = ctx.output
+        map[Input(ctx.txHash, 0)] = ctx.output
     }
 
     /**
@@ -32,7 +31,7 @@ class UTXO {
      * and removes the [Input]'s from the [map].
      */
     fun addAndRemoveOutputsFrom(tx: Transaction) {
-        tx.outputs.stream().map { map.put(Input(tx.txHash, tx.outputs.indexOf(it)), it) }
-        tx.inputs.stream().map { map.remove(it) }
+        tx.outputs.stream().forEach { map.put(Input(tx.txHash, tx.outputs.indexOf(it)), it) }
+        tx.inputs.stream().forEach { map.remove(it) }
     }
 }
