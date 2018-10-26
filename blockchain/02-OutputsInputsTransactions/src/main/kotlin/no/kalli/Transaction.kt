@@ -7,24 +7,29 @@ import java.util.stream.Collectors
 
 class Transaction(var senderPublicKey: PublicKey) {
 
-    //Simplified compared to Bitcoin
     val inputs = ArrayList<Input>()
     val outputs = ArrayList<Output>()
 
-    //If we make the assumption that all the inputs belong to the
-    //same key, we can have one signature for the entire transaction,
-    //and not one for each input. This simplifies things a lot
-    //(more than you think)!
     private var signature: ByteArray = byteArrayOf(0)
 
     var txHash: String = ""
 
     //TODO Complete validation of the transaction. Called by the Application.
+
+    //    Validate the regular transaction created by the "miner"'s wallet:
+    //      - All the content must be valid (not null++)!!! - OK
+    //      - All the inputs are unspent and belongs to the sender
+    //      - There are no repeating inputs!!!
+    //      - All the outputs must have a value > 0 - OK
+    //      - The sum of inputs equals the sum of outputs - OK
+    //      - The transaction is correctly signed by the sender - OK
+    //      - The transaction hash is correct
     fun isValid(): Boolean {
         return inputs.isNotEmpty()
                 && outputs.isNotEmpty()
+                && inputs.size == outputs.size
                 && outputs.stream().allMatch { it.value < 21000000 && it.value > 0 }
-
+                && DSAUtil.verifyWithDSA(senderPublicKey, inputsToString() + outputsToString(), signature)
     }
 
     fun addInput(input: Input) = inputs.add(input)
