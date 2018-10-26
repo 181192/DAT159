@@ -5,20 +5,6 @@ import kotlin.math.roundToLong
 @Throws(Exception::class)
 fun main(args: Array<String>) {
 
-    /*
-     * In this assignment, we are going to look at how to represent and record
-     * monetary transactions. We will use Bitcoin as the basis for the assignment,
-     * but there will be some simplifications.
-     *
-     * We are skipping the whole blockchain this time, and instead focus on the
-     * transaction details, the UTXOs and how money movements are represented.
-     *
-     * (If you want to, you can of course extend the assignment by collecting the
-     * individual transactions into blocks, create a Merkle tree for the block
-     * header, validate, mine and add the block to a blockchain.)
-     *
-     */
-
     val globalUTXO = UTXO()
 
     // 0. To get started, we need a few (single address) Wallets. Create 2 wallets.
@@ -41,14 +27,6 @@ fun main(args: Array<String>) {
     try {
         val regularTx = minerWallet.createTransaction((minerWallet.balance * 0.20).roundToLong(), myWallet.address)
 
-        //    Validate the regular transaction created by the "miner"'s wallet:
-        //      - All the content must be valid (not null++)!!!
-        //      - All the inputs are unspent and belongs to the sender
-        //      - There are no repeating inputs!!!
-        //      - All the outputs must have a value > 0
-        //      - The sum of inputs equals the sum of outputs
-        //      - The transaction is correctly signed by the sender
-        //      - The transaction hash is correct
         if (!regularTx.isValid()) throw Exception("Ayy lmao, transaction ${regularTx.txHash} is not valid")
 
         //    Update the UTXO-set (both add and remove).
