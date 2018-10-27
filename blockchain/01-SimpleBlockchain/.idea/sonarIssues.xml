@@ -78,6 +78,46 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/../02-OutputsInputsTransactions/src/main/kotlin/no/kalli/Application.kt">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../02-OutputsInputsTransactions/src/main/kotlin/no/kalli/CoinbaseTx.kt">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../02-OutputsInputsTransactions/src/main/kotlin/no/kalli/Input.kt">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../02-OutputsInputsTransactions/src/main/kotlin/no/kalli/Test.kt">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../02-OutputsInputsTransactions/src/main/kotlin/no/kalli/Transaction.kt">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../02-OutputsInputsTransactions/src/main/kotlin/no/kalli/UTXO.kt">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../02-OutputsInputsTransactions/src/main/kotlin/no/kalli/Wallet.kt">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../02-OutputsInputsTransactions/src/test/kotlin/no/kalli/CoinbaseTxTest.kt">
+          <value>
+            <set />
+          </value>
+        </entry>
       </map>
     </option>
   </component>
