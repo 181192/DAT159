@@ -1,7 +1,5 @@
 package no.kalli
 
-import kotlin.math.roundToLong
-
 @Throws(Exception::class)
 fun main(args: Array<String>) {
 
@@ -25,9 +23,12 @@ fun main(args: Array<String>) {
     var coinbaseTx = CoinbaseTx("Hello from the other side", 100, minerWallet.address)
 
     try {
-        val regularTx = minerWallet.createTransaction((minerWallet.balance * 0.20).roundToLong(), myWallet.address)
+        val regularTx = minerWallet.createTransaction(20, myWallet.address)
 
-        if (!regularTx.isValid()) throw Exception("Ayy lmao, transaction ${regularTx.txHash} is not valid")
+        if (!regularTx.isValid()
+                && globalUTXO.validateSumInputAndOutput(regularTx)
+                && globalUTXO.verifyUnpentTxOwner(regularTx))
+            throw Exception("Ayy lmao, transaction ${regularTx.txHash} is not valid")
 
         //    Update the UTXO-set (both add and remove).
         globalUTXO.addAndRemoveOutputsFrom(regularTx)
@@ -45,9 +46,12 @@ fun main(args: Array<String>) {
     coinbaseTx = CoinbaseTx("Hello darkness, my old friend", 100, minerWallet.address)
 
     try {
-        val regularTx = minerWallet.createTransaction((minerWallet.balance * 0.20).toLong(), myWallet.address)
+        val regularTx = minerWallet.createTransaction(20, myWallet.address)
 
-        if (!regularTx.isValid()) throw Exception("Ayy lmao, transaction ${regularTx.txHash} is not valid")
+        if (!regularTx.isValid()
+                && globalUTXO.validateSumInputAndOutput(regularTx)
+                && globalUTXO.verifyUnpentTxOwner(regularTx))
+            throw Exception("Ayy lmao, transaction ${regularTx.txHash} is not valid")
 
         globalUTXO.addAndRemoveOutputsFrom(regularTx)
         println("Block2:\n$coinbaseTx\n$regularTx")
