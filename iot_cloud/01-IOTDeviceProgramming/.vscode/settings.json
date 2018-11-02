@@ -1,2 +1,7 @@
 {
+  "arduino.commandPath": "arduino",
+  "arduino.logLevel": "info",
+  "arduino.enableUSBDetection": true,
+  "C_Cpp.intelliSenseEngine": "Tag Parser",
+  "arduino.path": "/opt/arduino/arduino-1.8.7"
 }
