@@ -1,11 +1,8 @@
 package no.kalli.subscribe;
 
-import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
-import org.eclipse.paho.client.mqttv3.MqttCallback;
-import org.eclipse.paho.client.mqttv3.MqttClient;
-import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
-import org.eclipse.paho.client.mqttv3.MqttException;
-import org.eclipse.paho.client.mqttv3.MqttMessage;
+import no.kalli.cloudmqttp.CloudMQTTPConfiguration;
+import no.kalli.cloudmqttp.YamlConfigRunner;
+import org.eclipse.paho.client.mqttv3.*;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 
 /**
@@ -15,13 +12,13 @@ public class MQTTSubTemperature implements MqttCallback {
 
     private String message;
 
-    public MQTTSubTemperature() throws MqttException {
-        String topic = "Temp";
-        int qos = 1;        //1 - This client will acknowledge to the Device Gateway that messages are received
-        String broker = "";
-        String clientId = "";
-        String username = "";
-        String password = "";
+    public MQTTSubTemperature(CloudMQTTPConfiguration configuration) throws MqttException {
+        String topic = configuration.getSubscriber().getTopic();
+        int qos = configuration.getSubscriber().getQos();
+        String broker = configuration.getServer().getUrl() + ":" + configuration.getServer().getPort();
+        String clientId = configuration.getApi();
+        String username = configuration.getUser();
+        String password = configuration.getPassword();
 
         MqttConnectOptions connOpts = new MqttConnectOptions();
         connOpts.setCleanSession(true);
@@ -74,8 +71,8 @@ public class MQTTSubTemperature implements MqttCallback {
     }
 
     public static void main(String args[]) throws MqttException {
-        new MQTTSubTemperature();
-
+        var configRunner = new YamlConfigRunner();
+        new MQTTSubTemperature(configRunner.setup(args));
     }
 
 }

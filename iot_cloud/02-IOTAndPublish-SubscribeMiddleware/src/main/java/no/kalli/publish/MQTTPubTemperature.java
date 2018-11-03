@@ -1,28 +1,31 @@
 package no.kalli.publish;
 
-import java.util.Random;
-
-import org.eclipse.paho.client.mqttv3.MqttClient;
-import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
-import org.eclipse.paho.client.mqttv3.MqttException;
-import org.eclipse.paho.client.mqttv3.MqttMessage;
-import org.eclipse.paho.client.mqttv3.MqttPersistenceException;
+import no.kalli.cloudmqttp.CloudMQTTPConfiguration;
+import no.kalli.cloudmqttp.YamlConfigRunner;
+import org.eclipse.paho.client.mqttv3.*;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
+
+import java.util.Random;
 
 public class MQTTPubTemperature {
 
-    private String topic = "Temp";
-    private int qos = 1;
-    private String broker = "";
-    private String clientId = "";
-    private String username = "";
-    private String password = "";
+    private String topic;
+    private int qos;
+    private String broker;
+    private String clientId;
+    private String username;
+    private String password;
 
     private MqttClient publisherClient;
     private Random rand;
 
-    public MQTTPubTemperature() {
-
+    public MQTTPubTemperature(CloudMQTTPConfiguration configuration) {
+        topic = configuration.getPublisher().getTopic();
+        qos = configuration.getPublisher().getQos();
+        broker = configuration.getServer().getUrl() + ":" + configuration.getServer().getPort();
+        clientId = configuration.getApi();
+        username = configuration.getUser();
+        password = configuration.getPassword();
         rand = new Random();
     }
 
@@ -64,10 +67,9 @@ public class MQTTPubTemperature {
     }
 
     public static void main(String[] args) throws InterruptedException, MqttPersistenceException, MqttException {
-
-        MQTTPubTemperature mqttpub = new MQTTPubTemperature();
+        var configRunner = new YamlConfigRunner();
+        MQTTPubTemperature mqttpub = new MQTTPubTemperature(configRunner.setup(args));
         mqttpub.connect();
         mqttpub.publish();
-
     }
 }
