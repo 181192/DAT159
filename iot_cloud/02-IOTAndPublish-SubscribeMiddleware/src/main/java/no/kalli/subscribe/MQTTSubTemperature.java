@@ -10,7 +10,7 @@ import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
  */
 public class MQTTSubTemperature implements MqttCallback {
 
-    private String message;
+    private String topic;
 
     public MQTTSubTemperature(CloudMQTTPConfiguration configuration) throws MqttException {
         String topic = configuration.getSubscriber().getTopic();
@@ -33,7 +33,7 @@ public class MQTTSubTemperature implements MqttCallback {
         System.out.println("Connected");
 
         client.subscribe(topic, qos);
-        System.out.println("Subscribed to message");
+        System.out.println("Subscribed to topic: " + topic);
 
     }
 
@@ -51,7 +51,7 @@ public class MQTTSubTemperature implements MqttCallback {
      */
     public void messageArrived(String topic, MqttMessage message) throws Exception {
         System.out.println(String.format("[%s] %s", topic, new String(message.getPayload())));
-        this.setMessage(new String(message.getPayload()));
+        this.setTopic(new String(message.getPayload()));
     }
 
     /**
@@ -62,12 +62,12 @@ public class MQTTSubTemperature implements MqttCallback {
 
     }
 
-    public String getMessage() {
-        return message;
+    public String getTopic() {
+        return topic;
     }
 
-    public void setMessage(String message) {
-        this.message = message;
+    public void setTopic(String topic) {
+        this.topic = topic;
     }
 
     public static void main(String args[]) throws MqttException {

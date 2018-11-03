@@ -9,7 +9,7 @@ class CloudMQTTPConfiguration {
     var subscriber: Subscriber = Subscriber()
     var publisher: Publisher = Publisher()
     override fun toString(): String {
-        return "CloudMQTTPConfiguration(server=$server, name='$name', user='$user', password='$password', api='$api', subscriber=$subscriber, publisher=$publisher)"
+        return "CloudMQTTPConfiguration(\n\tserver=$server,\nname='$name',\nuser='$user',\npassword='$password',\napi='$api',\nsubscriber=$subscriber,\npublisher=$publisher)"
     }
 
 

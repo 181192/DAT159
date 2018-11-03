@@ -6,6 +6,6 @@ class Server {
     var sslPort: Int = 0
     var websocketPort: Int = 0
     override fun toString(): String {
-        return "Server(url='$url', port=$port, sslPort=$sslPort, websocketPort=$websocketPort)"
+        return "Server(\n\t\turl='$url',\n\t\tport=$port,\n\t\tsslPort=$sslPort,\n\t\twebsocketPort=$websocketPort)"
     }
 }
