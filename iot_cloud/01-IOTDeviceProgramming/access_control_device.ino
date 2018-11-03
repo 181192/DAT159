@@ -11,7 +11,7 @@ int countBtnRight = 0;
 
 unsigned long startMillis;
 unsigned long currentMillis;
-const unsigned long period = 5000;
+const unsigned long period = 10000;
 
 void setup()
 {
@@ -125,9 +125,9 @@ void unlock(bool stateBtnLeft, bool stateBtnRight)
 
     countBtnLeft = 0;
     countBtnRight = 0;
+    state = 0;
     Serial.println((String) "Reset count: " + stateBtnLeft + ", " + stateBtnRight);
     delay(200);
-    state = 0;
 }
 
 void lock(bool statePir)
