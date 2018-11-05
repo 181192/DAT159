@@ -1,0 +1,18 @@
+server:
+  url: tcp://m21.cloudmqtt.com
+  port: 15453
+  sslPort: 25453
+  websocketPort: 35453
+
+publisher:
+  topic: Temp
+  qos: 1
+
+subscriber:
+  topic: Temp
+  qos: 1
+
+name: 02-IOTAndPublish-SubscribeMiddleware
+user: sdfgsdf
+password: sadfgdsgs
+api: 047b9d88-6da0-4123d-a94d-598c80asdaasdf
