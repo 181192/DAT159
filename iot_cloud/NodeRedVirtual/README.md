@@ -5,6 +5,8 @@ Includes:
 - Node-RED
 - PostgresSQL
 - Adminer
+- InfluxDB
+- Grafana
 
 List of plugins:
 
