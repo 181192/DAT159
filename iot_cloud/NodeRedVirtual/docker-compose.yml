@@ -1,0 +1,74 @@
+version: "3.7"
+services:
+  nodered:
+    depends_on:
+      - db
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: nodered_dat159:v1
+    ports:
+      - ${NODERED_PORT}:1880
+    volumes:
+      - nodered-data:/data
+    networks:
+      - iot
+      - backend
+    environment:
+      - FLOWS=flows.json
+    restart: always
+    deploy:
+      replicas: 2
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:1880"]
+      interval: 1m30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  db:
+    image: postgres:11.0
+    volumes:
+      - ./pg:/var/lib/postgresql/data
+    networks:
+      - backend
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: example
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  adminer:
+    image: adminer:4.6.3-standalone
+    depends_on:
+      - db
+    restart: always
+    ports:
+      - ${ADMINER_PORT}:8080
+    networks:
+      - iot
+      - backend
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080"]
+      interval: 1m30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+networks:
+  iot:
+    driver: bridge
+  backend:
+    driver: bridge
+
+volumes:
+  nodered-data:
+    name: nodered-data
