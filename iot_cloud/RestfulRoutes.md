@@ -9,7 +9,7 @@
 | New      | /dogs/new        | GET           | Show new dog form               |
 | Create   | /dogs            | POST          | Create a new dog, then redirect |
 | Edit     | /dogs/:id/edit   | GET           | Show edit form for one dog      |
-| Update   | /dogs/:id        | PATH/PUT      | Update one dog, then redirect   |
+| Update   | /dogs/:id        | PATCH/PUT     | Update one dog, then redirect   |
 | Destroy  | /dogs/:id/delete | DELETE        | Delete one dog, then redirect   |
 
 ## HTTP Status Codes - Overview
