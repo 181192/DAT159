@@ -26,7 +26,7 @@ services:
         window: 120s
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:1880"]
-      interval: 1m30s
+      interval: 30s
       timeout: 10s
       retries: 3
       start_period: 40s
@@ -58,10 +58,9 @@ services:
       - backend
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080"]
-      interval: 1m30s
+      interval: 30s
       timeout: 10s
       retries: 3
-      start_period: 40s
 
   influxdb:
     image: influxdb:1.6
