@@ -71,11 +71,16 @@ services:
       - backend
     volumes:
       - influxdb:/var/lib/influxdb
+    healthcheck:
+      test: "curl -f http://localhost:8086/ping"
+      interval: 3s
+      timeout: 10s
+      retries: 5
 
   grafana:
     image: grafana/grafana:latest
     ports:
-      - "3000:3000"
+      - "${GRAFANA_PORT}:3000"
     env_file:
       - "env.grafana"
     networks:
@@ -83,6 +88,10 @@ services:
       - backend
     volumes:
       - grafana-data:/var/lib/grafana
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f localhost:3000/api/health && echo 'ready'"]
+      interval: 10s
+      retries: 3
 
 networks:
   iot:
