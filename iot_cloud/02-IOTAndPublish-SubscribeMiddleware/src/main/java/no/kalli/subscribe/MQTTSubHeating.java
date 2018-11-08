@@ -1,27 +1,36 @@
 package no.kalli.subscribe;
 
 import no.kalli.cloudmqttp.CloudMQTTConfiguration;
-import no.kalli.roomcontrol.Display;
+import no.kalli.roomcontrol.Heating;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
 /**
  * @author Kristoffer-Andre Kalliainen
  */
-public class MQTTSubTemperature extends MQTTSub implements Runnable{
+public class MQTTSubHeating extends MQTTSub implements Runnable{
+
+    private Heating heating;
 
     private String topic;
     private int qos;
 
-    public MQTTSubTemperature(CloudMQTTConfiguration configuration) throws MqttException {
+    public MQTTSubHeating(CloudMQTTConfiguration configuration, Heating heating) throws MqttException {
         super(configuration);
-        topic = configuration.getTemperature().getTopic();
-        qos = configuration.getTemperature().getQos();
+        this.heating = heating;
+        topic = configuration.getHeat().getTopic();
+        qos = configuration.getHeat().getQos();
     }
 
     @Override
     public void messageArrived(String topic, MqttMessage message) throws Exception {
-        System.out.println("Sub message: " + new String(message.getPayload()));
+        var state = new String(message.getPayload());
+
+        if (state.equals("ON"))
+            heating.getRoom().actuate(true);
+
+        if (state.equals("OFF"))
+            heating.getRoom().actuate(false);
     }
 
     @Override
@@ -35,4 +44,5 @@ public class MQTTSubTemperature extends MQTTSub implements Runnable{
             e.printStackTrace();
         }
     }
+
 }
