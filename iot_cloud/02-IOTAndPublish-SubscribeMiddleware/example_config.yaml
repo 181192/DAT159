@@ -4,12 +4,12 @@ server:
   sslPort: 25453
   websocketPort: 35453
 
-publisher:
+temperature:
   topic: Temp
   qos: 1
 
-subscriber:
-  topic: Temp
+heat:
+  topic: Heat
   qos: 1
 
 name: 02-IOTAndPublish-SubscribeMiddleware

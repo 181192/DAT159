@@ -9,10 +9,10 @@ import java.nio.file.Paths
 
 
 class YamlConfigRunner {
-    fun setup(args: Array<String>): CloudMQTTPConfiguration {
+    fun setup(args: Array<String>): CloudMQTTConfiguration {
         val cli = Cli()
         val yaml = Yaml()
-        var config = CloudMQTTPConfiguration()
+        var config = CloudMQTTConfiguration()
 
         val commandLine = CommandLine(cli)
         commandLine.parse(*args)
@@ -23,7 +23,7 @@ class YamlConfigRunner {
 
         try {
             Files.newInputStream(Paths.get(cli.configFile)).use { `in` ->
-                config = yaml.loadAs(`in`, CloudMQTTPConfiguration::class.java)
+                config = yaml.loadAs(`in`, CloudMQTTConfiguration::class.java)
                 println(config.toString())
                 return config
             }
@@ -33,4 +33,10 @@ class YamlConfigRunner {
 
         return config
     }
+}
+
+
+fun main(args: Array<String>) {
+    val configRunner = YamlConfigRunner()
+    configRunner.setup(args)
 }
