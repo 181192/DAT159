@@ -73,7 +73,7 @@
                 <version>2.6</version>
                 <executions>
                     <execution>
-                        <id>Publisher</id>
+                        <id>RoomDevice</id>
                         <phase>package</phase>
                         <goals>
                             <goal>single</goal>
@@ -81,7 +81,7 @@
                         <configuration>
                             <archive>
                                 <manifest>
-                                    <mainClass>no.kalli.publish.MQTTPubTemperature</mainClass>
+                                    <mainClass>no.kalli.roomcontrol.RoomDeviceKt</mainClass>
                                 </manifest>
                             </archive>
                             <descriptorRefs>
@@ -90,7 +90,7 @@
                         </configuration>
                     </execution>
                     <execution>
-                        <id>Subscriber</id>
+                        <id>HeatController</id>
                         <phase>package</phase>
                         <goals>
                             <goal>single</goal>
@@ -98,7 +98,24 @@
                         <configuration>
                             <archive>
                                 <manifest>
-                                    <mainClass>no.kalli.subscribe.MQTTSubTemperature</mainClass>
+                                    <mainClass>no.kalli.roomcontrol.HeatControllerKt</mainClass>
+                                </manifest>
+                            </archive>
+                            <descriptorRefs>
+                                <descriptorRef>jar-with-dependencies</descriptorRef>
+                            </descriptorRefs>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>Display</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <configuration>
+                            <archive>
+                                <manifest>
+                                    <mainClass>no.kalli.roomcontrol.DisplayKt</mainClass>
                                 </manifest>
                             </archive>
                             <descriptorRefs>
