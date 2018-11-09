@@ -21,13 +21,17 @@ public class MQTTPubHeating extends MQTTPub implements Runnable {
     }
 
     public void publish() throws MqttException, InterruptedException {
-
-        /*
-        If temperatur of room is high, turn of the heater
-         */
         for (int i = 0; i < 10; i++) {
 
-            String heat = String.valueOf("ON");
+            String heat = "ON";
+
+            if (heating.getRoom().sense() > 20) {
+                heat = "OFF";
+                heating.write(false);
+            } else {
+                heating.write(true);
+            }
+
 
             System.out.println("Publishing message: " + heat);
 
