@@ -1,13 +1,13 @@
 package no.kalli.subscribe;
 
-import no.kalli.cloudmqttp.CloudMQTTConfiguration;
+import cloudmqttp.CloudMQTTConfiguration;
 import org.eclipse.paho.client.mqttv3.*;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 
 /**
  * @author Kristoffer-Andre Kalliainen
  */
-public abstract class MQTTSub implements MqttCallback {
+public abstract class MQTTSub implements MqttCallback, Runnable {
 
     private String broker;
     private String username;
@@ -15,13 +15,13 @@ public abstract class MQTTSub implements MqttCallback {
 
     private MqttClient client;
 
-    public MQTTSub(CloudMQTTConfiguration configuration) throws MqttException {
+    MQTTSub(CloudMQTTConfiguration configuration) throws MqttException {
         broker = configuration.getServer().getUrl() + ":" + configuration.getServer().getPort();
         username = configuration.getUser();
         password = configuration.getPassword();
     }
 
-    public void connect() {
+    void connect() {
         MqttConnectOptions connOpts = new MqttConnectOptions();
         connOpts.setCleanSession(true);
         connOpts.setUserName(username);
@@ -38,7 +38,7 @@ public abstract class MQTTSub implements MqttCallback {
         System.out.println("Connected");
     }
 
-    private void disconnect() {
+    void disconnect() {
         try {
             client.disconnect();
         } catch (MqttException e) {
@@ -68,36 +68,27 @@ public abstract class MQTTSub implements MqttCallback {
 
     }
 
-    public String getBroker() {
+    @Override
+    public void run() {
+        try {
+            System.out.println("Connecting to broker: " + getBroker());
+            connect();
+
+            String topic = "Temp";
+            int qos = 1;
+
+            getClient().subscribe(topic, qos);
+            System.out.println("Subscribed to topic: " + topic);
+        } catch (MqttException e) {
+            e.printStackTrace();
+        }
+    }
+
+    String getBroker() {
         return broker;
     }
 
-    public void setBroker(String broker) {
-        this.broker = broker;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public MqttClient getClient() {
+    MqttClient getClient() {
         return client;
     }
-
-    public void setClient(MqttClient client) {
-        this.client = client;
-    }
-
 }

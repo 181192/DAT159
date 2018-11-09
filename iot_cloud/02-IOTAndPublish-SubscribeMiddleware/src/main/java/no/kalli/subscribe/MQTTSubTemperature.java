@@ -1,39 +1,29 @@
 package no.kalli.subscribe;
 
-import no.kalli.cloudmqttp.CloudMQTTConfiguration;
-import no.kalli.roomcontrol.Display;
-import no.kalli.roomcontrol.Heating;
+import cloudmqttp.CloudMQTTConfiguration;
+import no.kalli.publish.MQTTPubHeating;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
+import roomcontrol.TemperatureSensor;
 
 /**
  * @author Kristoffer-Andre Kalliainen
  */
-public class MQTTSubTemperature extends MQTTSub implements Runnable{
+public class MQTTSubTemperature extends MQTTSub implements Runnable {
 
-    private String topic;
-    private int qos;
-    private Heating heating;
+    private MQTTPubHeating pubHeating;
 
-    public MQTTSubTemperature(CloudMQTTConfiguration configuration, Heating heating) throws MqttException {
+    public MQTTSubTemperature(CloudMQTTConfiguration configuration, MQTTPubHeating pubHeating) throws MqttException {
         super(configuration);
-        topic = configuration.getTemperature().getTopic();
-        qos = configuration.getTemperature().getQos();
+        this.pubHeating = pubHeating;
     }
 
     @Override
     public void messageArrived(String topic, MqttMessage message) throws Exception {
-        System.out.println("Sub message: " + new String(message.getPayload()));
-    }
-
-    @Override
-    public void run() {
         try {
-            System.out.println("Connecting to broker: " + getBroker());
-            connect();
-            getClient().subscribe(topic, qos);
-            System.out.println("Subscribed to topic: " + topic);
-        } catch (MqttException e) {
+            double temp = Double.parseDouble(new String(message.getPayload()));
+            pubHeating.publish(temp < 20 ? "ON" : "OFF");
+        } catch (NumberFormatException e) {
             e.printStackTrace();
         }
     }

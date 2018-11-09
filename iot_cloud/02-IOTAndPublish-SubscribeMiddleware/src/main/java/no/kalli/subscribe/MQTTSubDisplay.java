@@ -1,7 +1,7 @@
 package no.kalli.subscribe;
 
-import no.kalli.cloudmqttp.CloudMQTTConfiguration;
-import no.kalli.roomcontrol.Display;
+import cloudmqttp.CloudMQTTConfiguration;
+import roomcontrol.Display;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
@@ -11,14 +11,9 @@ public class MQTTSubDisplay extends MQTTSub implements Runnable {
 
     private Display display;
 
-    private String topic;
-    private int qos;
-
     public MQTTSubDisplay(CloudMQTTConfiguration configuration, Display display) throws MqttException {
         super(configuration);
         this.display = display;
-        topic = configuration.getTemperature().getTopic();
-        qos = configuration.getTemperature().getQos();
     }
 
     @Override
@@ -30,17 +25,5 @@ public class MQTTSubDisplay extends MQTTSub implements Runnable {
                 "  QoS:\t" + message.getQos();
 
         display.write(tmp);
-    }
-
-    @Override
-    public void run() {
-        try {
-            System.out.println("Connecting to broker: " + getBroker());
-            connect();
-            getClient().subscribe(topic, qos);
-            System.out.println("Subscribed to topic: " + topic);
-        } catch (MqttException e) {
-            e.printStackTrace();
-        }
     }
 }
