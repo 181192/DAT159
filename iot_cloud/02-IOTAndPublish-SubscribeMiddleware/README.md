@@ -14,6 +14,27 @@ To build the project from scratch run `mvn clean install` in the project directo
 Kotlin is setup to be installed as a Maven assembly.
 
 
+## Overview
+The architecture of this system is that we have a Room Device that has a temperature
+sensor and a heating element. The temperature sensor publishes the temperature to the CloudMQTT
+server. The Room Device also listens for messages to turn on and off the heating element, that
+is being controlled by the Controller. This controller listens for the temperatures updates,
+and adjust the state of the heating element on the Room Device.
+And to have an overview of whats happening we have a display, that is displaying out the temperatures
+from the temperature sensor. 
+![overview](https://raw.githubusercontent.com/181192/DAT159/master/iot_cloud/02-IOTAndPublish-SubscribeMiddleware/overview.png)
+
+
+## CLI Support
+```shell
+$ java -jar target/Display.jar --help
+
+Usage: MQTTP Temperature [-h] [-f=string]
+02-IOT and Publish-Subscribe Middleware
+  -f, --file=string   Name of config file for CloudMQTTP
+  -h, --help          Display a help message
+```
+
 ## Room Device
 ```shell
 $ java -jar 02-IOTAndPublish-SubscribeMiddleware-RoomDevice.jar -f config.yaml
