@@ -2,4 +2,4 @@ FROM openjdk:10-jdk-slim
 
 ADD ./target/Display.jar Display.jar
 
-ENTRYPOINT ["java","-jar", "Display.jar"]
+ENTRYPOINT ["java","-jar", "Display.jar", "-f", "config.yml"]

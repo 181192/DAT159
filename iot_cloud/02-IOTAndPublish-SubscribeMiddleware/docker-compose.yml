@@ -5,16 +5,19 @@ services:
       context: .
       dockerfile: dockerfiles/Dockerfile.Display
     image: 02-iot-display:v1
-    command: ["-f ${CONFIG_FILE}"]
+    volumes:
+      - ./${CONFIG_FILE}:/config.yml
   heat_controller:
     build:
       context: .
       dockerfile: dockerfiles/Dockerfile.HeatController
     image: 02-iot-heat-controller:v1
-    command: ["-f ${CONFIG_FILE}"]
+    volumes:
+    - ./${CONFIG_FILE}:/config.yml
   room_device:
     build:
       context: .
       dockerfile: dockerfiles/Dockerfile.RoomDevice
     image: 02-iot-room-device:v1
-    command: ["-f ${CONFIG_FILE}"]
+    volumes:
+    - ./${CONFIG_FILE}:/config.yml
