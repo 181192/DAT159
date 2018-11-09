@@ -108,4 +108,5 @@ fabric.properties
 # Editor-based Rest Client
 .idea/httpRequests
 
-config.yaml
+config.yml
+.env
