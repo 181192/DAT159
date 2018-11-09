@@ -18,12 +18,22 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/.env">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/.gitignore">
           <value>
             <set />
           </value>
         </entry>
         <entry key="$PROJECT_DIR$/02-IOTAndPublish-SubscribeMiddleware.iml">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/Dockerfile">
           <value>
             <set />
           </value>
@@ -44,6 +54,31 @@
           </value>
         </entry>
         <entry key="$PROJECT_DIR$/demo_config.yaml">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/docker-compose.yml">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/dockerfiles/Dockerfile.Display">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/dockerfiles/Dockerfile.HeatController">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/dockerfiles/Dockerfile.RoomDevice">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/env.sample">
           <value>
             <set />
           </value>
@@ -249,6 +284,51 @@
           </value>
         </entry>
         <entry key="$PROJECT_DIR$/src/main/java/no/kalli/subscribe/MQTTSubTemperature.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/src/main/kotlin/cli/Cli.kt">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/src/main/kotlin/cloudmqttp/CloudMQTTConfiguration.kt">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/src/main/kotlin/cloudmqttp/YamlConfigRunner.kt">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/src/main/kotlin/roomcontrol/Display.kt">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/src/main/kotlin/roomcontrol/HeatController.kt">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/src/main/kotlin/roomcontrol/Heating.kt">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/src/main/kotlin/roomcontrol/Room.kt">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/src/main/kotlin/roomcontrol/RoomDevice.kt">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/src/main/kotlin/roomcontrol/TemperatureSensor.kt">
           <value>
             <set />
           </value>

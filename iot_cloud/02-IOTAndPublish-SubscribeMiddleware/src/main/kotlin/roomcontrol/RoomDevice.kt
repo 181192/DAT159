@@ -1,14 +1,17 @@
-package no.kalli.roomcontrol
+package roomcontrol
 
-import no.kalli.cloudmqttp.YamlConfigRunner
+import cloudmqttp.YamlConfigRunner
 import no.kalli.publish.MQTTPubTemperature
 import no.kalli.subscribe.MQTTSubHeating
 
 fun main(args: Array<String>) {
-    val room = Room(20.0)
-    val sensor = TemperatureSensor(room)
     val config = YamlConfigRunner().setup(args)
+
+    val room = Room(20.0)
+
+    val sensor = TemperatureSensor(room)
     val sensorPub = MQTTPubTemperature(config, sensor)
+
     val heating = Heating(room)
     val heatSub = MQTTSubHeating(config, heating)
 

@@ -1,4 +1,4 @@
-package no.kalli.roomcontrol
+package roomcontrol
 
 class Room(startTemp: Double) {
 
@@ -18,9 +18,9 @@ class Room(startTemp: Double) {
     }
 
     @Synchronized
-    fun actuate(newstate: Boolean) {
+    fun actuate(newState: Boolean) {
         sense()
-        tempState = if (newstate) 1 else -1
+        tempState = if (newState) 1 else -1
     }
 
     companion object {
