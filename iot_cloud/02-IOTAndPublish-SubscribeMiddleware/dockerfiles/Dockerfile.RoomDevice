@@ -1,0 +1,5 @@
+FROM openjdk:10-jdk-slim
+
+ADD ./target/RoomDevice.jar RoomDevice.jar
+
+ENTRYPOINT ["java","-jar", "RoomDevice.jar"]
