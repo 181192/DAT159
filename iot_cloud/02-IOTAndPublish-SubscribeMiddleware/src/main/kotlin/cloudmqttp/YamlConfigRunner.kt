@@ -1,6 +1,6 @@
-package no.kalli.cloudmqttp
+package cloudmqttp
 
-import no.kalli.cli.Cli
+import cli.Cli
 import org.yaml.snakeyaml.Yaml
 import picocli.CommandLine
 import java.io.IOException
@@ -15,7 +15,13 @@ class YamlConfigRunner {
         var config = CloudMQTTConfiguration()
 
         val commandLine = CommandLine(cli)
-        commandLine.parse(*args)
+        try {
+            commandLine.parse(*args)
+        } catch (e: CommandLine.MissingParameterException) {
+            println(e.message)
+            System.exit(1)
+        }
+
         if (commandLine.isUsageHelpRequested) {
             commandLine.usage(System.out)
             System.exit(1)
@@ -24,7 +30,7 @@ class YamlConfigRunner {
         try {
             Files.newInputStream(Paths.get(cli.configFile)).use { `in` ->
                 config = yaml.loadAs(`in`, CloudMQTTConfiguration::class.java)
-                println(config.toString())
+                println(config)
                 return config
             }
         } catch (e: IOException) {
@@ -33,10 +39,4 @@ class YamlConfigRunner {
 
         return config
     }
-}
-
-
-fun main(args: Array<String>) {
-    val configRunner = YamlConfigRunner()
-    configRunner.setup(args)
 }
