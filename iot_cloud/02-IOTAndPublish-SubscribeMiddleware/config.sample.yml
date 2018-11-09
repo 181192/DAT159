@@ -3,15 +3,6 @@ server:
   port: 15453
   sslPort: 25453
   websocketPort: 35453
-
-temperature:
-  topic: Temp
-  qos: 1
-
-heat:
-  topic: Heat
-  qos: 1
-
 name: 02-IOTAndPublish-SubscribeMiddleware
 user: sdfgsdf
 password: sadfgdsgs
