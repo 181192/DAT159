@@ -1,0 +1,20 @@
+version: '3'
+services:
+  display:
+    build:
+      context: .
+      dockerfile: dockerfiles/Dockerfile.Display
+    image: 02-iot-display:v1
+    command: ["-f ${CONFIG_FILE}"]
+  heat_controller:
+    build:
+      context: .
+      dockerfile: dockerfiles/Dockerfile.HeatController
+    image: 02-iot-heat-controller:v1
+    command: ["-f ${CONFIG_FILE}"]
+  room_device:
+    build:
+      context: .
+      dockerfile: dockerfiles/Dockerfile.RoomDevice
+    image: 02-iot-room-device:v1
+    command: ["-f ${CONFIG_FILE}"]
