@@ -2,6 +2,7 @@ package no.kalli.subscribe;
 
 import no.kalli.cloudmqttp.CloudMQTTConfiguration;
 import no.kalli.roomcontrol.Display;
+import no.kalli.roomcontrol.Heating;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
@@ -12,8 +13,9 @@ public class MQTTSubTemperature extends MQTTSub implements Runnable{
 
     private String topic;
     private int qos;
+    private Heating heating;
 
-    public MQTTSubTemperature(CloudMQTTConfiguration configuration) throws MqttException {
+    public MQTTSubTemperature(CloudMQTTConfiguration configuration, Heating heating) throws MqttException {
         super(configuration);
         topic = configuration.getTemperature().getTopic();
         qos = configuration.getTemperature().getQos();

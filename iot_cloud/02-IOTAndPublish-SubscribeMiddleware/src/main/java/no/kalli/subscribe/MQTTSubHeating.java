@@ -25,7 +25,6 @@ public class MQTTSubHeating extends MQTTSub implements Runnable{
     @Override
     public void messageArrived(String topic, MqttMessage message) throws Exception {
         var state = new String(message.getPayload());
-
         if (state.equals("ON"))
             heating.getRoom().actuate(true);
 
