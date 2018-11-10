@@ -30,7 +30,6 @@ class YamlConfigRunner {
         try {
             Files.newInputStream(Paths.get(cli.configFile)).use { `in` ->
                 config = yaml.loadAs(`in`, CloudMQTTConfiguration::class.java)
-                println(config)
                 return config
             }
         } catch (e: IOException) {
