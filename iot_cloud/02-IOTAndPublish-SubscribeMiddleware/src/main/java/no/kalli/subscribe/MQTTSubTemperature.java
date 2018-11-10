@@ -19,7 +19,7 @@ public class MQTTSubTemperature extends MQTTSub implements Runnable {
     }
 
     @Override
-    public void messageArrived(String topic, MqttMessage message) throws Exception {
+    public void messageArrived(String topic, MqttMessage message) {
         try {
             double temp = Double.parseDouble(new String(message.getPayload()));
             pubHeating.publish(temp < 20 ? "ON" : "OFF");

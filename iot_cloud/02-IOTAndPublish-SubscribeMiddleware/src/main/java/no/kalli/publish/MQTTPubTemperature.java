@@ -23,7 +23,7 @@ public class MQTTPubTemperature extends MQTTPub implements Runnable {
     }
 
     private void publish() throws MqttException, InterruptedException {
-        for (int i = 0; i < 10; i++) {
+        while (true) {
 
             String temp = String.valueOf(sensor.read());
 
