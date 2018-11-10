@@ -15,15 +15,20 @@ public class MQTTPubHeating extends MQTTPub {
         super(configuration);
         topic = "Heat";
         qos = 1;
+        connect();
     }
 
-    public void publish(String heatState) throws MqttException, InterruptedException {
+    public void publish(String heatState) {
         System.out.println("Publishing message: " + heatState);
 
         MqttMessage message = new MqttMessage(heatState.getBytes());
 
         message.setQos(qos);
 
-        getPublisherClient().publish(topic, message);
+        try {
+            getPublisherClient().publish(topic, message);
+        } catch (MqttException e) {
+            e.printStackTrace();
+        }
     }
 }
