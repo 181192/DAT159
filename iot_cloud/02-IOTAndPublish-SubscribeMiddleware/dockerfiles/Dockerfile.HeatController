@@ -2,4 +2,4 @@ FROM openjdk:10-jdk-slim
 
 ADD ./target/HeatController.jar HeatController.jar
 
-ENTRYPOINT ["java","-jar", "HeatController.jar", "-f", "config.yml"]
+ENTRYPOINT ["java","-jar", "HeatController.jar", "-f", "/config.yml"]
