@@ -60,7 +60,7 @@ Usage: MQTTP Temperature [-h] [-f=string]
 
 ## Room Device
 ```shell
-$ java -jar RoomDevice.jar -f config.yaml
+$ java -jar target/RoomDevice.jar -f config.yml
 
 Sensor publisher running
 Connecting to broker: tcp://m21.cloudmqtt.com:15453
@@ -84,7 +84,7 @@ Sensor publisher stopping
 
 ## Heat Controller
 ```shell
-$ java -jar 02-IOTAndPublish-SubscribeMiddleware-HeatController.jar -f config.yaml
+$ java -jar target/HeatController.jar -f config.yml
 
 Sensor publisher running
 Connecting to broker: tcp://m21.cloudmqtt.com:15453
@@ -116,7 +116,7 @@ Sensor publisher stopping
 
 ## Display
 ```shell
-$ java -jar 02-IOTAndPublish-SubscribeMiddleware-HeatController.jar -f config.yaml
+$ java -jar target/Display.jar -f config.yml
 
 Connecting to broker: tcp://m21.cloudmqtt.com:15453
 Connected
