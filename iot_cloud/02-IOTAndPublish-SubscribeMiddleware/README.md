@@ -60,7 +60,11 @@ Usage: MQTTP Temperature [-h] [-f=string]
 
 ## Room Device
 ```shell
+<<<<<<< HEAD
 $ java -jar RoomDevice.jar -f config.yaml
+=======
+$ java -jar target/RoomDevice.jar -f config.yml
+>>>>>>> fa2c4bff245000ca9e65199bf1e49e0935618d2e
 
 Sensor publisher running
 Connecting to broker: tcp://m21.cloudmqtt.com:15453
@@ -84,7 +88,11 @@ Sensor publisher stopping
 
 ## Heat Controller
 ```shell
+<<<<<<< HEAD
 $ java -jar 02-IOTAndPublish-SubscribeMiddleware-HeatController.jar -f config.yaml
+=======
+$ java -jar target/HeatController.jar -f config.yml
+>>>>>>> fa2c4bff245000ca9e65199bf1e49e0935618d2e
 
 Sensor publisher running
 Connecting to broker: tcp://m21.cloudmqtt.com:15453
@@ -116,7 +124,11 @@ Sensor publisher stopping
 
 ## Display
 ```shell
+<<<<<<< HEAD
 $ java -jar 02-IOTAndPublish-SubscribeMiddleware-HeatController.jar -f config.yaml
+=======
+$ java -jar target/Display.jar -f config.yml
+>>>>>>> fa2c4bff245000ca9e65199bf1e49e0935618d2e
 
 Connecting to broker: tcp://m21.cloudmqtt.com:15453
 Connected
@@ -167,4 +179,8 @@ docker-compose logs -tf name
 ![output](https://raw.githubusercontent.com/181192/DAT159/master/iot_cloud/02-IOTAndPublish-SubscribeMiddleware/output.png)
 
 ## Output from CloudMQTT
+<<<<<<< HEAD
 ![cloud_mqtt](https://raw.githubusercontent.com/181192/DAT159/master/iot_cloud/02-IOTAndPublish-SubscribeMiddleware/cloudmqtt_output.png)
+=======
+![cloud_mqtt](https://raw.githubusercontent.com/181192/DAT159/master/iot_cloud/02-IOTAndPublish-SubscribeMiddleware/cloudmqtt_output.png)
+>>>>>>> fa2c4bff245000ca9e65199bf1e49e0935618d2e
