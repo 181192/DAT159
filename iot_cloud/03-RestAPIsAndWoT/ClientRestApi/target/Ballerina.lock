@@ -1,0 +1,15 @@
+[project]
+name = ""
+version = ""
+lockfileversion = "1"
+ballerinaversion = "0.983.0"
+modules = [ "client_rest_api.bal" ]
+
+[[module]] 
+name = "client_rest_api.bal"
+imports = [{org="ballerinax", name="docker",version="0.0.0"}]
+
+[[module]] 
+org = "ballerinax"
+name = "docker"
+

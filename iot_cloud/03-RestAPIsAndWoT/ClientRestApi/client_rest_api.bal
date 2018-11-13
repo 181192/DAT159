@@ -1,8 +1,14 @@
 import ballerina/http;
 import ballerina/log;
+import ballerinax/docker;
+
+@docker:Expose {}
+endpoint http:Listener listener {
+    port: 9090
+};
 
 // By default, Ballerina assumes that the service is to be exposed via HTTP/1.1.
-service<http:Service> hello bind { port: 9090 } {
+service<http:Service> hello bind listener {
 
     // All resources are invoked with arguments of server connector and request.
     sayHello(endpoint caller, http:Request req) {
