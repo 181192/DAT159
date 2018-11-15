@@ -10,17 +10,27 @@ import java.net.URL
 import java.net.URLEncoder
 import java.util.*
 
-class DweetClient {
+class DweetClient(var thingName: String) {
     private var API_DWEET_END_POINT = "dweet.io"
-    private var thingName = "dat159-sensor"
     private var jsonParser = JsonParser()
 
-    fun publish(temperature: Int): Boolean {
-
+    fun publish(temperature: Double): Boolean {
         val content = JsonObject()
 
         content.addProperty("Temperature", temperature)
 
+        return publishHelper(content)
+    }
+
+    fun publish(heat: String): Boolean {
+        val content = JsonObject()
+
+        content.addProperty("Heat", heat)
+
+        return publishHelper(content)
+    }
+
+    private fun publishHelper(content: JsonObject): Boolean {
         thingName = URLEncoder.encode(thingName, "UTF-8")
 
         val url = URL("http://$API_DWEET_END_POINT/dweet/for/$thingName")
@@ -63,12 +73,8 @@ class DweetClient {
 
         val response = readResponse(connection.inputStream)
 
-
-        return if (response.has("this") && response.get("this").asString == "succeeded") {
-            response.toString()
-        } else {
-            ""
-        }
+        return if (response.has("this")
+                && response.get("this").asString == "succeeded") response.toString() else ""
     }
 
     private fun readResponse(input: InputStream): JsonObject {
@@ -80,6 +86,6 @@ class DweetClient {
             sn.append(scan.nextLine()).append('\n')
         scan.close()
 
-        return jsonParser.parse(sn.toString()).asJsonObject;
+        return jsonParser.parse(sn.toString()).asJsonObject
     }
 }
