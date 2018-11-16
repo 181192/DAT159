@@ -7,6 +7,8 @@ import spark.kotlin.after
 import spark.kotlin.get
 import spark.kotlin.port
 import spark.kotlin.put
+import java.time.LocalDateTime
+import java.util.*
 
 fun main(args: Array<String>) {
 
@@ -19,32 +21,54 @@ fun main(args: Array<String>) {
         response.type("application/json")
     }
 
-    get("/tempsensor/current") {
+    val tempName = "kalli-temperature"
+    get("get/latest/dweet/for/$tempName") {
+        Gson().toJson(
+                StandardResponse(
+                        _this = "succeeded",
+                        by = "dweeting",
+                        the = "dweet",
+                        with = With(
+                                thing = tempName,
+                                created = LocalDateTime.now().toString(),
+                                content = Gson().toJsonTree(temperature),
+                                transaction = UUID.randomUUID().toString()
+                        )
+                )
+        )
+    }
+
+
+    put("/dweet/for/$tempName") {
+        temperature = Gson().fromJson(request.body(), Temperature::class.java)
         GsonBuilder()
                 .create()
                 .toJson(temperature)
     }
 
-    put("/tempsensor/current") {
-        temperature = Gson().fromJson(request.body(), Temperature::class.java)
+    val heaterName = "kalli-heater"
+
+    get("get/latest/dweet/for/$heaterName") {
         Gson().toJson(
                 StandardResponse(
-                        StatusResponse.SUCCESS,
-                        Gson().toJsonTree(temperature)))
+                        _this = "succeeded",
+                        by = "dweeting",
+                        the = "dweet",
+                        with = With(
+                                thing = heaterName,
+                                created = LocalDateTime.now().toString(),
+                                content = Gson().toJsonTree(heater),
+                                transaction = UUID.randomUUID().toString()
+                        )
+                )
+        )
     }
 
-    get("/heatactuator/current") {
+    put("/dweet/for/$heaterName") {
+        heater = Gson().fromJson(request.body(), Heating::class.java)
         GsonBuilder()
                 .create()
                 .toJson(heater)
-    }
-
-    put("/heatactuator/current") {
-        heater = Gson().fromJson(request.body(), Heating::class.java)
-        Gson().toJson(
-                StandardResponse(
-                        StatusResponse.SUCCESS,
-                        Gson().toJsonTree(heater)))
     }
 
 }
@@ -53,13 +77,6 @@ data class Temperature(var temperature: Double = 0.0)
 
 data class Heating(var heat: String = "OFF")
 
-data class StandardResponse(val status: StatusResponse?, val message: String?, val data: JsonElement?) {
-    constructor(status: StatusResponse) : this(status, null, null)
-    constructor(status: StatusResponse, message: String) : this(status, message, null)
-    constructor(status: StatusResponse, data: JsonElement) : this(status, null, data)
-}
+data class With(val thing: String, val created: String, val content: JsonElement, val transaction: String?)
 
-enum class StatusResponse {
-    SUCCESS,
-    ERROR
-}
+data class StandardResponse(val _this: String, val by: String, val the: String, val with: With)

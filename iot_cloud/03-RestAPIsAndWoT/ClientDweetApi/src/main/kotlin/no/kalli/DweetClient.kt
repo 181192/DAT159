@@ -11,7 +11,7 @@ import java.net.URLEncoder
 import java.util.*
 
 class DweetClient(var thingName: String) {
-    private var API_DWEET_END_POINT = "dweet.io"
+    private var API_DWEET_END_POINT = "localhost:8080"
     private var jsonParser = JsonParser()
 
     fun publish(temperature: Double) = JsonObject()
@@ -29,7 +29,7 @@ class DweetClient(var thingName: String) {
                 .let { it.openConnection() as HttpURLConnection }
                 .apply {
                     setRequestProperty("Content-Type", "application/json; charset=utf-8")
-                    requestMethod = "POST"
+                    requestMethod = "PUT"
                     doInput = true
                     doOutput = true
                 }
@@ -43,7 +43,7 @@ class DweetClient(var thingName: String) {
 
         readResponse(connection.inputStream)
                 .also { connection.disconnect() }
-                .apply { return has("this") && get("this").asString == "succeeded" }
+                .apply { return has("_this") && get("_this").asString == "succeeded" }
     }
 
     fun get(): String {
@@ -63,8 +63,8 @@ class DweetClient(var thingName: String) {
         readResponse(connection.inputStream)
                 .also { connection.disconnect() }
                 .apply {
-                    return if (has("this")
-                            && get("this").asString == "succeeded") toString() else ""
+                    return if (has("_this")
+                            && get("_this").asString == "succeeded") toString() else ""
                 }
     }
 
