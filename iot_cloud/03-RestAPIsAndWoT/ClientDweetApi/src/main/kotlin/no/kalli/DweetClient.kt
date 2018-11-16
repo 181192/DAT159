@@ -14,67 +14,58 @@ class DweetClient(var thingName: String) {
     private var API_DWEET_END_POINT = "dweet.io"
     private var jsonParser = JsonParser()
 
-    fun publish(temperature: Double): Boolean {
-        val content = JsonObject()
+    fun publish(temperature: Double) = JsonObject()
+            .apply { addProperty("Temperature", temperature) }
+            .let { publishHelper(it) }
 
-        content.addProperty("Temperature", temperature)
-
-        return publishHelper(content)
-    }
-
-    fun publish(heat: String): Boolean {
-        val content = JsonObject()
-
-        content.addProperty("Heat", heat)
-
-        return publishHelper(content)
-    }
+    fun publish(heat: String) = JsonObject()
+            .apply { addProperty("Heat", heat) }
+            .let { publishHelper(it) }
 
     private fun publishHelper(content: JsonObject): Boolean {
         thingName = URLEncoder.encode(thingName, "UTF-8")
 
-        val url = URL("http://$API_DWEET_END_POINT/dweet/for/$thingName")
+        val connection = URL("http://$API_DWEET_END_POINT/dweet/for/$thingName")
+                .let { it.openConnection() as HttpURLConnection }
+                .apply {
+                    setRequestProperty("Content-Type", "application/json; charset=utf-8")
+                    requestMethod = "POST"
+                    doInput = true
+                    doOutput = true
+                }
 
-        val connection = url.openConnection() as HttpURLConnection
+        PrintWriter(connection.outputStream)
+                .apply {
+                    println(content.toString())
+                    flush()
+                    close()
+                }
 
-        connection.setRequestProperty("Content-Type", "application/json; charset=utf-8")
-        connection.requestMethod = "POST"
-        connection.doInput = true
-        connection.doOutput = true
-
-        val out = PrintWriter(connection.outputStream)
-
-        println(content.toString())
-
-        out.flush()
-        out.close()
-
-        val response = readResponse(connection.inputStream)
-
-        connection.disconnect()
-
-        return (response.has("this") && response.get("this").asString == "succeeded")
+        readResponse(connection.inputStream)
+                .also { connection.disconnect() }
+                .apply { return has("this") && get("this").asString == "succeeded" }
     }
 
     fun get(): String {
-        // http://dweet.io/get/latest/dweet/for/dat159-sensor
 
         thingName = URLEncoder.encode(thingName, "UTF-8")
 
-        val url = URL("http://$API_DWEET_END_POINT/get/latest/dweet/for/$thingName")
+        val connection = URL("http://$API_DWEET_END_POINT/get/latest/dweet/for/$thingName")
+                .let { it.openConnection() as HttpURLConnection }
+                .apply {
+                    setRequestProperty("Content-Type", "application/json; charset=utf-8")
+                    setRequestProperty("Accept", "application/json")
+                    requestMethod = "GET"
+                    doInput = true
+                    doOutput = true
+                }
 
-        val connection = url.openConnection() as HttpURLConnection
-
-        connection.setRequestProperty("Content-Type", "application/json; charset=utf-8")
-        connection.setRequestProperty("Accept", "application/json")
-        connection.requestMethod = "GET"
-        connection.doInput = true
-        connection.doOutput = true
-
-        val response = readResponse(connection.inputStream)
-
-        return if (response.has("this")
-                && response.get("this").asString == "succeeded") response.toString() else ""
+        readResponse(connection.inputStream)
+                .also { connection.disconnect() }
+                .apply {
+                    return if (has("this")
+                            && get("this").asString == "succeeded") toString() else ""
+                }
     }
 
     private fun readResponse(input: InputStream): JsonObject {
