@@ -3,7 +3,7 @@ import ballerina/log;
 import ballerinax/docker;
 import ballerina/time;
 import ballerina/swagger;
-
+import ballerina/system;
 
 type Temperature record {
     float temperature;
@@ -33,6 +33,7 @@ service<http:Service> client bind listener {
     json<Temperature> temp = {
         temperature: 0.0
     };
+
     json<Heater> heater = {
         heat: "OFF"
     };
@@ -46,23 +47,22 @@ service<http:Service> client bind listener {
 
         time:Time time = time:currentTime();
 
-
         json payload = {
-            "_this": "succeeded",
+            "this": "succeeded",
             "by": "dweeting",
             "the": "dweet",
-            "_with": {
+            ^"with": {
                 "thing": thingName,
-                "created": "",
-                "transaction": ""
+                "created": time.toString(),
+                "transaction": system:uuid()
             }
         };
 
         if (thingName.equalsIgnoreCase("kalli-temperature")) {
-            payload._with.content = temp;
+            payload.^"with".content = temp;
             res.setJsonPayload(untaint payload);
         } else if (thingName.equalsIgnoreCase("kalli-heater")) {
-            payload._with.content = heater;
+            payload.^"with".content = heater;
             res.setJsonPayload(untaint payload);
         } else {
             res.statusCode = 404;
