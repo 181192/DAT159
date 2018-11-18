@@ -33,9 +33,10 @@ open class ClientAPI(var thingName: String) {
                     close()
                 }
 
-        readResponse(connection.inputStream)
+        val res = readResponse(connection.inputStream)
                 .also { connection.disconnect() }
-                .apply { return has("_this") && get("_this").asString == "succeeded" }
+
+        return res.has("_this") && res.get("_this").asString == "succeeded"
     }
 
     fun get(): String {
@@ -52,12 +53,11 @@ open class ClientAPI(var thingName: String) {
                     doOutput = true
                 }
 
-        readResponse(connection.inputStream)
+        val res = readResponse(connection.inputStream)
                 .also { connection.disconnect() }
-                .apply {
-                    return if (has("_this")
-                            && get("_this").asString == "succeeded") toString() else ""
-                }
+
+        return if (res.has("_this")
+                && res.get("_this").asString == "succeeded") res.toString() else ""
     }
 
     private fun readResponse(input: InputStream): JsonObject {
