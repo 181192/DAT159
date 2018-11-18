@@ -2,13 +2,14 @@ package no.kalli.api
 
 import com.google.gson.Gson
 import com.google.gson.JsonObject
+import no.kalli.Heating
 import no.kalli.HeatingActuator
 import no.kalli.Response
 
 class HeaterClient(thingName: String, val actuator: HeatingActuator? = null) : ClientAPI(thingName), Runnable {
-    fun getLatestHeatState(): String {
+    fun getLatestHeatState(): Heating {
         val response: Response = Gson().fromJson(get(), Response::class.java)
-        return response.with.content.asJsonObject.get("heat").asString
+        return Heating(response.with.content.asJsonObject.get("heat").asString)
     }
 
     fun publish(heat: String): Boolean = JsonObject()
@@ -16,7 +17,7 @@ class HeaterClient(thingName: String, val actuator: HeatingActuator? = null) : C
             .let { publishHelper(it) }
 
     override fun run() {
-        val state = getLatestHeatState()
+        val state = getLatestHeatState().heat
         if (state == "ON") actuator!! write true
         if (state == "OFF") actuator!! write false
     }

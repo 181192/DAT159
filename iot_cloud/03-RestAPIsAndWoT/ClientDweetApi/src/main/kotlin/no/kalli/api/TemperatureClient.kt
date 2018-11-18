@@ -3,12 +3,13 @@ package no.kalli.api
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import no.kalli.Response
+import no.kalli.Temperature
 import no.kalli.TemperatureSensor
 
 class TemperatureClient(thingName: String, val sensor: TemperatureSensor? = null) : ClientAPI(thingName), Runnable {
-    fun getLatestTemperature(): Double {
+    fun getLatestTemperature(): Temperature {
         val response: Response = Gson().fromJson(get(), Response::class.java)
-        return response.with.content.asJsonObject.get("temperature").asDouble
+        return Temperature(response.with.content.asJsonObject.get("temperature").asDouble)
     }
 
     fun publish(temperature: Double): Boolean = JsonObject()

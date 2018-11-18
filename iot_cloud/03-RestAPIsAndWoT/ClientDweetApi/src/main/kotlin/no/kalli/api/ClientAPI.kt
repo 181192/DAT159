@@ -36,7 +36,7 @@ open class ClientAPI(var thingName: String) {
         val res = readResponse(connection.inputStream)
                 .also { connection.disconnect() }
 
-        return res.has("_this") && res.get("_this").asString == "succeeded"
+        return res.has("this") && res.get("this").asString == "succeeded"
     }
 
     fun get(): String {
@@ -56,8 +56,8 @@ open class ClientAPI(var thingName: String) {
         val res = readResponse(connection.inputStream)
                 .also { connection.disconnect() }
 
-        return if (res.has("_this")
-                && res.get("_this").asString == "succeeded") res.toString() else ""
+        return if (res.has("this")
+                && res.get("this").asString == "succeeded") res.toString() else ""
     }
 
     private fun readResponse(input: InputStream): JsonObject {

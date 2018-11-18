@@ -8,7 +8,7 @@ fun main(args: Array<String>) {
     val heatClient = HeaterClient(thingName = "kalli-heater")
 
     while (true) {
-        val temp = tempClient.getLatestTemperature()
+        val temp = tempClient.getLatestTemperature().temperature
 
         if (temp < 20) heatClient.publish("ON") else heatClient.publish("OFF")
 
