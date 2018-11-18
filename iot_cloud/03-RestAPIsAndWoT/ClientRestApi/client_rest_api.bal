@@ -1,22 +1,100 @@
 import ballerina/http;
 import ballerina/log;
 import ballerinax/docker;
+import ballerina/time;
+import ballerina/swagger;
 
-@docker:Expose {}
+
+type Temperature record {
+    float temperature;
+    !...
+};
+
+type Heater record {
+    string heat;
+    !...
+};
+
+@docker:Expose
+@swagger:ClientEndpoint
 endpoint http:Listener listener {
     port: 9090
 };
 
-// By default, Ballerina assumes that the service is to be exposed via HTTP/1.1.
-service<http:Service> hello bind listener {
+@swagger:ClientConfig {
+    generate: true
+}
 
-    // All resources are invoked with arguments of server connector and request.
-    sayHello(endpoint caller, http:Request req) {
+@http:ServiceConfig {
+    basePath: "/"
+}
+service<http:Service> client bind listener {
+
+    json<Temperature> temp = {
+        temperature: 0.0
+    };
+    json<Heater> heater = {
+        heat: "OFF"
+    };
+
+    @http:ResourceConfig {
+        methods: ["GET"],
+        path: "/get/latest/dweet/for/{thingName}"
+    }
+    get(endpoint caller, http:Request req, string thingName) {
         http:Response res = new;
-        // A util method that can be used to set a string payload.
-        res.setPayload("Hello, World!");
 
-        // Sends the response back to the caller.
-        caller->respond(res) but { error e => log:printError("Error sending response", err = e) };
+        time:Time time = time:currentTime();
+
+
+        json payload = {
+            "_this": "succeeded",
+            "by": "dweeting",
+            "the": "dweet",
+            "_with": {
+                "thing": thingName,
+                "created": "",
+                "transaction": ""
+            }
+        };
+
+        if (thingName.equalsIgnoreCase("kalli-temperature")) {
+            payload._with.content = temp;
+            res.setJsonPayload(untaint payload);
+        } else if (thingName.equalsIgnoreCase("kalli-heater")) {
+            payload._with.content = heater;
+            res.setJsonPayload(untaint payload);
+        } else {
+            res.statusCode = 404;
+            res.setPayload("Sorry, thing not found");
+        }
+
+        caller->respond(res) but {
+            error e => log:printError("Error sending response", err = e)
+        };
+    }
+
+    @http:ResourceConfig {
+        methods: ["PUT"],
+        path: "/dweet/for/{thingName}"
+    }
+    update(endpoint caller, http:Request req, string thingName) {
+        http:Response res = new;
+        json updateResource = check req.getJsonPayload();
+
+        if (thingName.equalsIgnoreCase("kalli-temperature")) {
+            temp.temperature = updateResource.temperature;
+            res.setJsonPayload(untaint temp);
+        } else if (thingName.equalsIgnoreCase("kalli-heater")) {
+            heater.heat = updateResource.heat;
+            res.setJsonPayload(untaint heater);
+        } else {
+            res.statusCode = 404;
+            res.setPayload("Sorry, thing not found");
+        }
+
+        caller->respond(res) but {
+            error e => log:printError("Error sending response", err = e)
+        };
     }
 }
