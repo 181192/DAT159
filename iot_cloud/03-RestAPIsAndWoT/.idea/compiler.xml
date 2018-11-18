@@ -11,7 +11,7 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="ClientRestApi" target="1.5" />
+      <module name="BallerinaRestApi" target="1.5" />
       <module name="TestTest" target="1.8" />
     </bytecodeTargetLevel>
   </component>

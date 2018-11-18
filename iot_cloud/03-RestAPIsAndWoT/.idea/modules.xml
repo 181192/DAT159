@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/ClientRestApi/ClientRestApi.iml" filepath="$PROJECT_DIR$/ClientRestApi/ClientRestApi.iml" />
+      <module fileurl="file://$PROJECT_DIR$/BallerinaRestApi/BallerinaRestApi.iml" filepath="$PROJECT_DIR$/BallerinaRestApi/BallerinaRestApi.iml" />
     </modules>
   </component>
 </project>
