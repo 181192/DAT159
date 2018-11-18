@@ -2,7 +2,7 @@
 
 ##### _By Kristoffer-Andre Kalliainen (181192)_
 
-[GitHub repository - 181192](https://github.com/181192/DAT159/tree/master/iot_cloud/02-IOTAndPublish-SubscribeMiddleware)
+[GitHub repository - 181192](https://github.com/181192/DAT159/tree/master/iot_cloud/03-RestAPIsAndWoT)
 
 ## About the project
 
