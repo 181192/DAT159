@@ -1,4 +1,4 @@
-package no.kalli
+package no.kalli.api
 
 
 import com.google.gson.JsonObject
@@ -10,19 +10,11 @@ import java.net.URL
 import java.net.URLEncoder
 import java.util.*
 
-class DweetClient(var thingName: String) {
+open class ClientAPI(var thingName: String) {
     private var API_DWEET_END_POINT = "localhost:8080"
     private var jsonParser = JsonParser()
 
-    fun publish(temperature: Double) = JsonObject()
-            .apply { addProperty("Temperature", temperature) }
-            .let { publishHelper(it) }
-
-    fun publish(heat: String) = JsonObject()
-            .apply { addProperty("Heat", heat) }
-            .let { publishHelper(it) }
-
-    private fun publishHelper(content: JsonObject): Boolean {
+    fun publishHelper(content: JsonObject): Boolean {
         thingName = URLEncoder.encode(thingName, "UTF-8")
 
         val connection = URL("http://$API_DWEET_END_POINT/dweet/for/$thingName")
