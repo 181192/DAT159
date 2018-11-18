@@ -25,7 +25,7 @@ fun main(args: Array<String>) {
     get("get/latest/dweet/for/$tempName") {
         Gson().toJson(
                 Response(
-                        _this = "succeeded",
+                        `this` = "succeeded",
                         by = "dweeting",
                         the = "dweet",
                         with = With(
@@ -49,7 +49,7 @@ fun main(args: Array<String>) {
     get("get/latest/dweet/for/$heaterName") {
         Gson().toJson(
                 Response(
-                        _this = "succeeded",
+                        `this` = "succeeded",
                         by = "dweeting",
                         the = "dweet",
                         with = With(
@@ -78,4 +78,4 @@ data class Heating(var heat: String = "OFF")
 
 data class With(val thing: String, val created: String, val content: JsonElement, val transaction: String)
 
-data class Response(val _this: String, val by: String, val the: String, val with: With)
+data class Response(val `this`: String, val by: String, val the: String, val with: With)
