@@ -8,7 +8,7 @@ data class Heating(var heat: String = "OFF")
 
 data class With(val thing: String, val created: String, val content: JsonElement, val transaction: String)
 
-data class Response(val _this: String, val by: String, val the: String, val with: With)
+data class Response(val `this`: String, val by: String, val the: String, val with: With)
 
 class Room(startTemp: Double) {
 

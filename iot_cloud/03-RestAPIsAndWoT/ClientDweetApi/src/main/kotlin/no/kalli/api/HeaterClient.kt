@@ -17,8 +17,11 @@ class HeaterClient(thingName: String, val actuator: HeatingActuator? = null) : C
             .let { publishHelper(it) }
 
     override fun run() {
-        val state = getLatestHeatState().heat
-        if (state == "ON") actuator!! write true
-        if (state == "OFF") actuator!! write false
+        while (true) {
+            val state = getLatestHeatState().heat
+            if (state == "ON") actuator!! write true
+            if (state == "OFF") actuator!! write false
+            Thread.sleep(10000)
+        }
     }
 }

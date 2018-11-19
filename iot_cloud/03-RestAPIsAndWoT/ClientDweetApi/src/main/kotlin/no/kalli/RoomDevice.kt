@@ -7,18 +7,20 @@ fun main(args: Array<String>) {
 
     val room = Room(20.0)
     val sensor = TemperatureSensor(room)
+    val temperatureClient = TemperatureClient(thingName = "kalli-temperature", sensor = sensor)
+
     val actuator = HeatingActuator(room)
+    val heaterClient = HeaterClient(thingName = "kalli-heater", actuator = actuator)
 
     try {
-        val temperatureClient = Thread(TemperatureClient(thingName = "kalli-temperature", sensor = sensor))
+        val temp = Thread(temperatureClient)
+        val heat = Thread(heaterClient)
 
-        val heaterClient = Thread(HeaterClient(thingName = "kalli-heater", actuator = actuator))
+        heat.start()
+        temp.start()
 
-        temperatureClient.start()
-        heaterClient.start()
-
-        temperatureClient.join()
-        heaterClient.join()
+        heat.join()
+        temp.join()
 
     } catch (e: Exception) {
         println("RoomDevice: " + e.message)

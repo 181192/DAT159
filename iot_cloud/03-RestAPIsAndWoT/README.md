@@ -1,4 +1,4 @@
-# 02-IOTAndPublish-SubscribeMiddleware
+# 03-RestAPIsAndWoT
 
 ##### _By Kristoffer-Andre Kalliainen (181192)_
 
